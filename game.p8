@@ -11,7 +11,8 @@ function _update()
 end
 
 function _draw()
-
+  cls()
+  map()
 end
 
 __gfx__
