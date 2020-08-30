@@ -5,6 +5,16 @@ __lua__
 -- a game object should always have an update and draw function
 game_objects = {}
 
+-- @todo change these to be more themed towards candies
+elements = {
+  -- this a neutral type that applies no weaknesses or resistances
+  normal = "normal",
+  grass = "grass"
+}
+
+#include attacks.p8
+#include candies.p8
+
 -- @todo have an end state
 -- @todo move all wait checking functionality inside the game state
 game_state = {
@@ -30,59 +40,6 @@ game_state = {
       print("press z to attack", 30, 43, 2)
     end
   end
-}
-
--- @todo change these to be more themed towards candies
-elements = {
-  -- this a neutral type that applies no weaknesses or resistances
-  normal = "normal",
-  grass = "grass"
-}
-
--- attacks
-punch = {
-  name = "punch",
-  power = 25,
-  element = elements.normal,
-  status_effect = nil
-}
-
-kick = {
-  name = "kick",
-  power = 20,
-  element = elements.normal,
-  status_effect = nil
-}
-
-rot_teeth = {
-  name = "rot teeth",
-  power = 25,
-  element = elements.normal,
-  status_effect = nil
-}
-
--- @todo this should raise defense
-caramelize = {
-  name = "caramelize",
-  power = 0,
-  element = elements.normal,
-  status_effect = nil
-}
-
--- unique candies
-razor_apple = {
-  name = "razor apple",
-  sprite = nil,
-  hp = 100,
-  attack = 100,
-  defense = 100,
-  element = elements.grass,
-  attacks = {
-    punch,
-    kick,
-    rot_teeth,
-    caramelize
-  }
 }
 
 -- @todo create another candy and display the name in the draw function
