@@ -5,8 +5,8 @@ __lua__
 -- a game object should always have an update and draw function
 game_objects = {}
 
--- todo: have an end state
--- todo: move all wait checking functionality inside the game state
+-- @todo have an end state
+-- @todo move all wait checking functionality inside the game state
 game_state = {
   is_player_turn = true,
   wait = 0,
@@ -32,26 +32,60 @@ game_state = {
   end
 }
 
-local types = {
+-- @todo change these to be more themed towards candies
+elements = {
+  -- this a neutral type that applies no weaknesses or resistances
+  normal = "normal",
   grass = "grass"
 }
 
--- todo:
--- create attacks and make_attack function
--- may not need a make_attack function if they are all unique
--- each candy will have its unique table of attacks
+-- attacks
+punch = {
+  name = "punch",
+  power = 25,
+  element = elements.normal,
+  status_effect = nil
+}
 
+kick = {
+  name = "kick",
+  power = 20,
+  element = elements.normal,
+  status_effect = nil
+}
+
+rot_teeth = {
+  name = "rot teeth",
+  power = 25,
+  element = elements.normal,
+  status_effect = nil
+}
+
+-- @todo this should raise defense
+caramelize = {
+  name = "caramelize",
+  power = 0,
+  element = elements.normal,
+  status_effect = nil
+}
+
+-- unique candies
 razor_apple = {
   name = "razor apple",
   sprite = nil,
   hp = 100,
   attack = 100,
   defense = 100,
-  element = types.grass
+  element = elements.grass,
+  attacks = {
+    punch,
+    kick,
+    rot_teeth,
+    caramelize
+  }
 }
 
--- todo: create another candy and display the name in the draw function
-
+-- @todo create another candy and display the name in the draw function
 function make_candy(candy, x, y, color, is_player)
   return {
     is_player = is_player,
@@ -65,11 +99,12 @@ function make_candy(candy, x, y, color, is_player)
     attack = candy.attack,
     defense = candy.defense,
     element = candy.element,
+    attacks = candy.attacks,
     state = nil, -- maybe to be used for status effects?
     update = function(self)
       -- when you attack, damage the enemy
       if (self.is_player and game_state.is_player_turn and btnp(4)) then
-        self:attack(enemy)
+        self:selected_attack(enemy)
         game_state:switch_turns()
       end
 
@@ -77,13 +112,22 @@ function make_candy(candy, x, y, color, is_player)
       -- self.wait x frames, and attack, then pass the turn
       if (not self.is_player) then
         if (game_state.wait > game_state.wait_time) then
-          self:attack(player)
+          self:random_attack(player)
           game_state:switch_turns()
         end
       end
     end,
-    attack = function(self, victim)
-      victim.hp -= 20
+    random_attack = function(self, victim)
+      local random_attack = self.attacks[flr(rnd(4)) + 1]
+      self:attack(victim, random_attack.power)
+    end,
+    selected_attack = function(self, victim)
+      -- @todo get the selected attack once menu is in place
+      local selected_attack = self.attacks[1]
+      self:attack(victim, selected_attack.power)
+    end,
+    attack = function(self, victim, power)
+      victim.hp -= power
       if (victim.hp < 0) victim.hp = 0
     end,
     draw = function(self)
@@ -120,11 +164,17 @@ function _draw()
   for k, game_object in pairs(game_objects) do
     game_object:draw()
   end
-  -- @todo supply this info from the candy
-  print("attack", 80, 97, 12)
-  print("defend", 80, 104, 7)
-  print("rot teeth", 80, 111, 7)
-  print("caramelize", 80, 118, 7)
+
+  -- @todo move this draw method to a ui/menu object
+  local attack_display_y = 97
+  for k, attack in pairs(player.attacks) do
+    -- @todo we'll need to dynamically change the text color
+    -- based on what the cursor is highlighting
+    local attack_color = k == 1 and 12 or 7
+    print(attack.name, 80, attack_display_y, attack_color)
+    attack_display_y += 7
+  end
+
   spr(15, 70, 96)
   print("razor apple is", 5, 97, 7)
   print("angry!!", 5, 104, 7)
