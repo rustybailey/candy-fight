@@ -2,6 +2,9 @@ pico-8 cartridge // http://www.pico-8.com
 version 29
 __lua__
 
+-- a game object should always have an update and draw function
+game_objects = {}
+
 -- todo: have an end state
 -- todo: move all wait checking functionality inside the game state
 game_state = {
@@ -37,7 +40,6 @@ local types = {
 -- create attacks and make_attack function
 -- may not need a make_attack function if they are all unique
 -- each candy will have its unique table of attacks
-candies = {}
 
 razor_apple = {
   name = "razor apple",
@@ -101,23 +103,22 @@ function make_candy(candy, x, y, color, is_player)
 end
 
 function _init()
-  player = add(candies, make_candy(razor_apple, 10, 70, 8, true))
-  enemy = add(candies, make_candy(razor_apple, 100, 13, 9, false))
+  add(game_objects, game_state)
+  player = add(game_objects, make_candy(razor_apple, 10, 70, 8, true))
+  enemy = add(game_objects, make_candy(razor_apple, 100, 13, 9, false))
 end
 
 function _update()
-  game_state:update();
-  for k, candy in pairs(candies) do
-    candy:update()
+  for k, game_object in pairs(game_objects) do
+    game_object:update()
   end
 end
 
 function _draw()
   cls()
   map()
-  game_state:draw();
-  for k, candy in pairs(candies) do
-    candy:draw()
+  for k, game_object in pairs(game_objects) do
+    game_object:draw()
   end
   -- @todo supply this info from the candy
   print("attack", 80, 97, 12)
