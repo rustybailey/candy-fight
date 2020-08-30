@@ -135,8 +135,7 @@ function make_candy(candy, x, y, color, is_player)
       self:attack(victim, random_attack.power)
     end,
     selected_attack = function(self, victim)
-      -- @todo get the selected attack once menu is in place
-      local selected_attack = self.attacks[1]
+      local selected_attack = self.attacks[menu.current_selection]
       self:attack(victim, selected_attack.power)
     end,
     attack = function(self, victim, power)
