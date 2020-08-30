@@ -42,6 +42,49 @@ game_state = {
   end
 }
 
+menu = {
+  x = 80,
+  y = 97,
+  current_selection = 1,
+  max_attacks = 4,
+  update = function(self)
+    -- up
+    if btnp(2) then
+      self.current_selection -= 1
+      if (self.current_selection < 1) then
+        self.current_selection = self.max_attacks
+      end
+    end
+
+    -- down
+    if btnp(3) then
+      self.current_selection += 1
+      if (self.current_selection > self.max_attacks) then
+        self.current_selection = 1
+      end
+    end
+  end,
+  draw = function(self)
+    -- display attack names
+    local attack_display_y = self.y
+    for k, attack in pairs(player.attacks) do
+      local attack_color = k == self.current_selection and 12 or 7
+      print(attack.name, self.x, attack_display_y, attack_color)
+      attack_display_y += 7
+    end
+
+    -- draw cursor
+    if (game_state.is_player_turn) then
+      local cursor_y = self.y - 1 + (7 * (self.current_selection - 1))
+      spr(15, 70, cursor_y)
+    end
+
+    -- dialog text
+    print("razor apple is", 5, 97, 7)
+    print("angry!!", 5, 104, 7)
+  end
+}
+
 -- @todo create another candy and display the name in the draw function
 function make_candy(candy, x, y, color, is_player)
   return {
@@ -107,6 +150,7 @@ function _init()
   add(game_objects, game_state)
   player = add(game_objects, make_candy(razor_apple, 10, 70, 8, true))
   enemy = add(game_objects, make_candy(razor_apple, 100, 13, 9, false))
+  add(game_objects, menu)
 end
 
 function _update()
@@ -121,20 +165,6 @@ function _draw()
   for k, game_object in pairs(game_objects) do
     game_object:draw()
   end
-
-  -- @todo move this draw method to a ui/menu object
-  local attack_display_y = 97
-  for k, attack in pairs(player.attacks) do
-    -- @todo we'll need to dynamically change the text color
-    -- based on what the cursor is highlighting
-    local attack_color = k == 1 and 12 or 7
-    print(attack.name, 80, attack_display_y, attack_color)
-    attack_display_y += 7
-  end
-
-  spr(15, 70, 96)
-  print("razor apple is", 5, 97, 7)
-  print("angry!!", 5, 104, 7)
 end
 
 __gfx__
