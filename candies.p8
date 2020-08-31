@@ -7,9 +7,9 @@ razor_apple = {
   defense = 100,
   element = elements.grass,
   attacks = {
-    punch,
-    kick,
-    rot_teeth,
-    caramelize
+    make_attack(punch),
+    make_attack(kick),
+    make_attack(rot_teeth),
+    make_attack(caramelize)
   }
 }

@@ -113,8 +113,6 @@ function make_candy(candy, x, y, color, is_player)
     defense = candy.defense,
     element = candy.element,
     attacks = candy.attacks,
-    attack_animation = nil,
-    victim = nil,
     state = nil, -- maybe to be used for status effects?
     update = function(self)
       -- when you attack, damage the enemy
@@ -127,7 +125,7 @@ function make_candy(candy, x, y, color, is_player)
       -- self.wait x frames, and attack, then pass the turn
       if (not self.is_player) then
         if (game_state.wait > game_state.wait_time) then
-          self:random_attack(player)
+          self:selected_attack(player)
           game_state:switch_turns()
         end
       end
@@ -141,13 +139,7 @@ function make_candy(candy, x, y, color, is_player)
       self:attack(victim, selected_attack)
     end,
     attack = function(self, victim, selected_attack)
-      if (selected_attack.animation) then
-        self.attack_animation = cocreate(selected_attack.animation)
-        self.victim = victim
-      end
-
-      victim.hp -= selected_attack.power
-      if (victim.hp < 0) victim.hp = 0
+      selected_attack:trigger(victim)
     end,
     draw = function(self)
       -- draw character
@@ -161,22 +153,23 @@ function make_candy(candy, x, y, color, is_player)
 
       -- draw hp (we may move this to a ui object later)
       print("hp " .. self.hp, self.x, self.y - 8, color)
-
-      if (self.attack_animation and costatus(self.attack_animation) != 'dead') then
-        coresume(self.attack_animation, self.victim)
-      elseif (self.attack_animation) then
-        -- no longer attacking so unset the victim
-        self.victim = nil
-      end
     end
   }
 end
 
 function _init()
   add(game_objects, game_state)
-  enemy = add(game_objects, make_candy(razor_apple, 100, 13, 9, false))
   player = add(game_objects, make_candy(razor_apple, 10, 68, 8, true))
+  enemy = add(game_objects, make_candy(razor_apple, 100, 13, 9, false))
   add(game_objects, menu)
+
+  for k, attack in pairs(player.attacks) do
+    add(game_objects, attack)
+  end
+
+  for k, attack in pairs(enemy.attacks) do
+    add(game_objects, attack)
+  end
 end
 
 function _update()
