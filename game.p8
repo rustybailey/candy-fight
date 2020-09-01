@@ -17,6 +17,7 @@ elements = {
 
 -- @todo have an end state
 -- @todo move all wait checking functionality inside the game state
+-- @todo eventually remove the artificial wait time
 game_state = {
   is_player_turn = true,
   wait = 0,
@@ -32,12 +33,52 @@ game_state = {
   end,
   draw = function(self)
     print(self.wait, 10, 5, 2)
-    if (not self.is_player_turn and self.wait > 0 and self.wait <= self.wait_time) then
-      print("enemy is attacking", 30, 43, 2)
+
+    if (not self.is_player_turn and self.wait == 0) then
+      dialog:trigger("enemy is attacking")
     end
 
     if (self.is_player_turn) then
       print("press z to attack", 30, 43, 2)
+    end
+  end
+}
+
+dialog = {
+  x = 7,
+  y = 95,
+  color = 7,
+  current_message = nil,
+  message = nil,
+  animation_loop = nil,
+  trigger = function(self, message)
+    self.message = message
+    self.animation_loop = cocreate(self.animate_text)
+  end,
+  animate_text = function(self)
+    for i = 1, #self.message + 1 do
+      self.current_message = sub(self.message, 1, i)
+      yield()
+    end
+  end,
+  update = function(self)
+    -- @todo when you press a button before the animation finishes
+    -- it should automatically complete the message
+    -- @todo when the message completes, require a button press to continue
+    -- @todo possibly show a blinking cursor at the end of a completed message
+    -- @todo deal with line wraps for long messages
+    -- @todo add animations to a stack so that we can proceed to the next turn
+    -- only when the stack is clear
+
+    if (self.animation_loop and costatus(self.animation_loop) != 'dead') then
+      coresume(self.animation_loop, self)
+    elseif (self.animation_loop and self.current_message) then
+      self.current_message = nil
+    end
+  end,
+  draw = function(self)
+    if (self.current_message) then
+      print(self.current_message, self.x, self.y, self.color)
     end
   end
 }
@@ -67,10 +108,6 @@ menu = {
     end
   end,
   draw = function(self)
-    -- dialog text
-    print("razor apple is", 6, self.y, 7)
-    print("angry!!", 6, self.y + 7, 7)
-
     if not game_state.is_player_turn then return end
 
     -- display attack names
@@ -162,6 +199,7 @@ function _init()
   player = add(game_objects, make_candy(razor_apple, 10, 68, 8, true))
   enemy = add(game_objects, make_candy(razor_apple, 100, 13, 9, false))
   add(game_objects, menu)
+  add(game_objects, dialog)
 
   for k, attack in pairs(player.attacks) do
     add(game_objects, attack)
