@@ -1,7 +1,4 @@
 function basic_attack_animation(victim)
-  victim_center_x = flr(victim.width / 2) + victim.x
-  victim_center_y = flr(victim.height / 2) + victim.y
-
   x_offset = 0
   y_offset = 0
   animation_frame = 0
@@ -25,6 +22,23 @@ function basic_attack_animation(victim)
     spr(19, victim.x + x_offset, victim.y + y_offset)
     yield()
   end
+end
+
+function screen_shake_animation()
+  x = 20
+  travel = 1
+
+  for i = 0, 30 do
+    -- every 5 frames, alternate direction and reduce
+    -- shake by 20%
+    if (i % 5 == 0) x = x * -1 * travel; travel -= 0.2
+
+    camera(x, 0)
+    yield()
+  end
+
+  -- reset the camera back
+  camera(0, 0)
 end
 
 -- attacks
@@ -69,25 +83,38 @@ function make_attack(attack)
     status_effect = attack.status_effect,
     animation = attack.animation,
     victim = nil,
-    animation_loop = nil,
+    animation_loops = {},
     trigger = function(self, victim)
-      self.animation_loop = cocreate(self.animation)
-      add(animations, self.animation_loop)
+      add(self.animation_loops, cocreate(self.animation))
+      if (victim.is_player) then
+        -- if the victim is the player, add the screen shake
+        add(self.animation_loops, cocreate(screen_shake_animation))
+      end
+      foreach(self.animation_loops, function(animation_loop)
+        add(animations, animation_loop)
+      end)
       self.victim = victim
     end,
     update = function(self)
     end,
     draw = function(self)
-      if (self.animation_loop and costatus(self.animation_loop) != 'dead') then
-        coresume(self.animation_loop, self.victim)
-      elseif (self.animation_loop and self.victim) then
-        -- apply the damage once the animation ends
+      foreach(self.animation_loops, function(animation_loop)
+        if (animation_loop and costatus(animation_loop) != 'dead') then
+          coresume(animation_loop, self.victim)
+        else
+          del(self.animation_loops, animation_loop)
+          del(animations, animation_loop)
+        end
+      end)
+
+      -- if there are no more animations running, handle victim
+      -- clean up
+      if (#self.animation_loops == 0 and self.victim) then
         self.victim.hp -= self.power
         if (self.victim.hp < 0) self.victim.hp = 0
 
         -- no longer attacking so unset the victim
         self.victim = nil
-        del(animations, self.animation_loop)
       end
     end
   }
