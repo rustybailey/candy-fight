@@ -69,13 +69,30 @@ dialog = {
     if (self.animation_loop and costatus(self.animation_loop) != 'dead') then
       coresume(self.animation_loop, self)
     elseif (self.animation_loop and self.current_message) then
-      self.current_message = nil
-      del(animations, self.animation_loop)
+      if (btnp(4)) then
+        self.current_message = nil
+        del(animations, self.animation_loop)
+      end
     end
   end,
   draw = function(self)
     if (self.current_message) then
       print(self.current_message, self.x, self.y, self.color)
+    end
+
+    if (self.message and self.current_message == self.message) then
+      -- @todo make it blink
+      -- @todo use a down arrow sprite instead of square
+      -- draw end cursor
+      local top_left_x = self.x + (#self.message * 4) + 2
+      local top_left_y = self.y + 2
+      rectfill(
+        top_left_x,
+        top_left_y,
+        top_left_x + 2,
+        top_left_y + 2,
+        self.color
+      )
     end
   end
 }
@@ -154,7 +171,7 @@ function make_candy(candy, x, y, color, is_player)
     state = nil, -- maybe to be used for status effects?
     update = function(self)
       -- when you attack, damage the enemy
-      if (self.is_player and game_state.is_player_turn and btnp(4)) then
+      if (self.is_player and game_state.is_player_turn and #animations == 0 and btnp(4)) then
         self:selected_attack(enemy)
         game_state:switch_turns()
         menu:toggle(false)
@@ -162,7 +179,7 @@ function make_candy(candy, x, y, color, is_player)
 
       -- if it's not the player's turn, it's not the player, and no animations are happening
       if (not self.is_player and not game_state.is_player_turn and #animations == 0) then
-        self:selected_attack(player)
+        self:random_attack(player)
         game_state:switch_turns()
       end
     end,
