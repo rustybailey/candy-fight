@@ -72,6 +72,7 @@ function make_attack(attack)
     animation_loop = nil,
     trigger = function(self, victim)
       self.animation_loop = cocreate(self.animation)
+      add(animations, self.animation_loop)
       self.victim = victim
     end,
     update = function(self)
@@ -86,6 +87,7 @@ function make_attack(attack)
 
         -- no longer attacking so unset the victim
         self.victim = nil
+        del(animations, self.animation_loop)
       end
     end
   }

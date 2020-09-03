@@ -12,33 +12,29 @@ elements = {
   grass = "grass"
 }
 
+animations = {}
+
 #include attacks.p8
 #include candies.p8
 
 -- @todo have an end state
--- @todo move all wait checking functionality inside the game state
--- @todo eventually remove the artificial wait time
 game_state = {
   is_player_turn = true,
-  wait = 0,
-  wait_time = 30,
+  listen_for_turn_switch = false,
   switch_turns = function(self)
-    self.is_player_turn = not self.is_player_turn
-    self.wait = 0
+    self.listen_for_turn_switch = true
   end,
   update = function(self)
-    if (not self.is_player_turn) then
-      self.wait += 1
+    if (self.listen_for_turn_switch) then
+      if (#animations == 0) then
+        self.is_player_turn = not self.is_player_turn
+        self.listen_for_turn_switch = false
+        menu:toggle(self.is_player_turn)
+      end
     end
   end,
   draw = function(self)
-    print(self.wait, 10, 5, 2)
-
-    if (not self.is_player_turn and self.wait == 0) then
-      dialog:trigger("enemy is attacking")
-    end
-
-    if (self.is_player_turn) then
+    if (menu.is_visible) then
       print("press z to attack", 30, 43, 2)
     end
   end
@@ -54,6 +50,7 @@ dialog = {
   trigger = function(self, message)
     self.message = message
     self.animation_loop = cocreate(self.animate_text)
+    add(animations, self.animation_loop)
   end,
   animate_text = function(self)
     for i = 1, #self.message + 1 do
@@ -64,16 +61,16 @@ dialog = {
   update = function(self)
     -- @todo when you press a button before the animation finishes
     -- it should automatically complete the message
+
     -- @todo when the message completes, require a button press to continue
     -- @todo possibly show a blinking cursor at the end of a completed message
     -- @todo deal with line wraps for long messages
-    -- @todo add animations to a stack so that we can proceed to the next turn
-    -- only when the stack is clear
 
     if (self.animation_loop and costatus(self.animation_loop) != 'dead') then
       coresume(self.animation_loop, self)
     elseif (self.animation_loop and self.current_message) then
       self.current_message = nil
+      del(animations, self.animation_loop)
     end
   end,
   draw = function(self)
@@ -88,8 +85,12 @@ menu = {
   y = 95,
   current_selection = 1,
   max_attacks = 4,
+  is_visible = true,
+  toggle = function(self, should_show)
+    self.is_visible = should_show
+  end,
   update = function(self)
-    if not game_state.is_player_turn then return end
+    if not self.is_visible then return end
 
     -- up
     if btnp(2) then
@@ -108,7 +109,7 @@ menu = {
     end
   end,
   draw = function(self)
-    if not game_state.is_player_turn then return end
+    if not self.is_visible then return end
 
     -- display attack names
     local attack_display_y = self.y
@@ -156,15 +157,13 @@ function make_candy(candy, x, y, color, is_player)
       if (self.is_player and game_state.is_player_turn and btnp(4)) then
         self:selected_attack(enemy)
         game_state:switch_turns()
+        menu:toggle(false)
       end
 
-      -- if it's not the player's turn and it's not the player
-      -- self.wait x frames, and attack, then pass the turn
-      if (not self.is_player) then
-        if (game_state.wait > game_state.wait_time) then
-          self:selected_attack(player)
-          game_state:switch_turns()
-        end
+      -- if it's not the player's turn, it's not the player, and no animations are happening
+      if (not self.is_player and not game_state.is_player_turn and #animations == 0) then
+        self:selected_attack(player)
+        game_state:switch_turns()
       end
     end,
     random_attack = function(self, victim)
@@ -177,6 +176,7 @@ function make_candy(candy, x, y, color, is_player)
     end,
     attack = function(self, victim, selected_attack)
       selected_attack:trigger(victim)
+      dialog:trigger(self.name .. " used " .. selected_attack.name)
     end,
     draw = function(self)
       -- draw character
