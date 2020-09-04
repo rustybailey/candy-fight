@@ -4,6 +4,7 @@ function basic_attack_animation(victim)
   animation_frame = 0
 
   for i = 0, 38 do
+    if (i == 0) sfx(1)
     if (i == 15) animation_frame = 0
 
     -- display sprite in the middle top of the victim for 4 frames
