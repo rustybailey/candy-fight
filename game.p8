@@ -41,9 +41,6 @@ game_state = {
     end
   end,
   draw = function(self)
-    if (menu.is_visible) then
-      print("press z to attack", 30, 43, 2)
-    end
   end
 }
 
@@ -269,8 +266,38 @@ function make_candy(candy, x, y, color, is_player)
         color
       )
 
-      -- draw hp (we may move this to a ui object later)
-      print("hp " .. self.hp, self.x, self.y - 8, color)
+      -- @todo animate the health bar and hp decreasing
+      -- draw name, hp, and health bar
+      local hp_text = self.hp .. "/100"
+      local name_x = 0
+      local hp_x = 0
+      local bar_x = 0
+      local padding = 7
+      -- position player elements to the right
+      if (self.is_player) then
+        name_x = 128 - (#self.name * 4) - padding
+        bar_x = 75
+        hp_x = 128 - (#hp_text * 4) - padding
+      -- position enemy elements to the left
+      else
+        name_x = padding + 2
+        bar_x = padding
+        hp_x = padding + 2
+      end
+
+      -- display name
+      print(self.name, name_x, self.y, 6)
+
+      -- display health bar
+      local bar_length = 46
+      local health_length = flr(bar_length * (self.hp / 100))
+      line(bar_x, self.y + 8, (bar_x + bar_length), self.y + 8, 2)
+      if (self.hp > 0) then
+        line(bar_x, self.y + 8, (bar_x + health_length), self.y + 8, 10)
+      end
+
+      -- display hp numbers
+      print(hp_text, hp_x, self.y + 12, 6)
     end
   }
 end
