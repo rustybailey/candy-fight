@@ -340,12 +340,14 @@ function change_scene(scene)
 end
 
 battle_screen = make_scene({
-  is_player_turn = true,
-  listen_for_turn_switch = false,
   switch_turns = function(self)
     self.listen_for_turn_switch = true
   end,
   init = function(self)
+    self.is_player_turn = true
+    self.listen_for_turn_switch = false
+    menu:toggle(true)
+
     player = self:add(make_candy(razor_apple, 10, 68, 8, true))
     enemy = self:add(make_candy(razor_apple, 100, 13, 9, false))
     self:add(menu)
@@ -439,8 +441,14 @@ function _update()
   current_scene:update()
 end
 
+profiler_on = false
 function _draw()
   current_scene:draw()
+
+  if (profiler_on) then
+    print('mem: '.. flr(stat(0)), 0, 0, 7)
+    print('cpu: '.. (flr(stat(1) * 100)) .. '%', 0, 8, 7)
+  end
 end
 
 __gfx__

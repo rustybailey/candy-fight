@@ -76,6 +76,30 @@ caramelize = {
   animation = basic_attack_animation
 }
 
+lazy_punch = {
+  name = "lazy punch",
+  power = 1,
+  element = elements.normal,
+  status_effect = nil,
+  animation = basic_attack_animation
+}
+
+saunter = {
+  name = "saunter",
+  power = 5,
+  element = elements.normal,
+  status_effect = nil,
+  animation = basic_attack_animation
+}
+
+slap = {
+  name = "slap",
+  power = 60,
+  element = elements.normal,
+  status_effect = nil,
+  animation = basic_attack_animation
+}
+
 function make_attack(attack)
   return {
     name = attack.name,
