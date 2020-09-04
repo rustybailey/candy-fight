@@ -44,26 +44,6 @@ game_state = {
   end
 }
 
--- split string - borrowed from https://www.lexaloffle.com/bbs/?tid=32520
-function split(str,d)
-  local a={}
-  local s=''
-  local tk=''
-
-  while #str>0 do
-    s=sub(str,1,1)
-    str=sub(str,2)
-    if s==d then
-      add(a,tk)
-      tk=''
-    else
-      tk=tk..s
-    end
-  end
-  add(a,tk)
-  return a
-end
-
 dialog = {
   x = 8,
   y = 96,
@@ -71,6 +51,7 @@ dialog = {
   current_message = nil,
   message = nil,
   animation_loop = nil,
+  max_chars_per_line = 27,
   trigger = function(self, message, autoplay)
     -- default autoplay to true
     self.autoplay = type(autoplay) == "nil" and true or autoplay
@@ -79,27 +60,38 @@ dialog = {
     add(animations, self.animation_loop)
   end,
   format_message = function(self, message)
-    -- split string
-    local words = split(message, " ")
-    self.number_of_lines = 1
-    self.current_line = ''
+    local total_msg = ''
+    local word = ''
+    local letter = ''
+    local delimiter = ''
+    self.current_line_msg = ''
+    self.num_lines = 1
 
-    -- concat string
-    -- local new_message = {}
-    local new_message = ''
-    for word in all(words) do
-      local delimiter = ' '
-      -- @todo use some math instead of just using 100
-      if ((#self.current_line + #word) * 4 > 110) then
-        delimiter = '\n'
-        self.current_line = ''
-        self.number_of_lines += 1
+    for i = 1, #message do
+      -- get the current letter add
+      letter = sub(message, i, i)
+
+      -- keep track of the current word
+      word ..= letter
+
+      -- if it's a space or the end of the message,
+      -- determine whether we need to put this word on a new line
+      if letter == ' ' or i == #message then
+        local line_length = #self.current_line_msg + #word
+        if line_length > self.max_chars_per_line then
+          word = '\n' .. word
+          self.num_lines += 1
+          self.current_line_msg = ''
+        else
+          self.current_line_msg ..= word
+        end
+
+        total_msg ..= word
+        word = ''
       end
-      self.current_line ..= delimiter .. word
-      new_message ..= delimiter .. word
     end
 
-    self.message = sub(new_message, 2, #new_message)
+    self.message = total_msg
   end,
   animate_text = function(self)
     for i = 1, #self.message + 1 do
