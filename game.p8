@@ -12,6 +12,13 @@ elements = {
   grass = "grass"
 }
 
+-- helper function to add delay in coroutines
+function delay(frames)
+  for i = 1, frames do
+    yield()
+  end
+end
+
 animations = {}
 
 #include attacks.p8
@@ -47,7 +54,10 @@ dialog = {
   current_message = nil,
   message = nil,
   animation_loop = nil,
-  trigger = function(self, message)
+  autoplay = false,
+  trigger = function(self, message, autoplay)
+    -- default autoplay to true
+    self.autoplay = type(autoplay) == "nil" and true or false
     self.message = message
     self.animation_loop = cocreate(self.animate_text)
     add(animations, self.animation_loop)
@@ -57,19 +67,25 @@ dialog = {
       self.current_message = sub(self.message, 1, i)
       yield()
     end
+
+    if (self.autoplay) then
+      delay(30)
+    end
   end,
   update = function(self)
     -- @todo when you press a button before the animation finishes
     -- it should automatically complete the message
 
-    -- @todo when the message completes, require a button press to continue
     -- @todo possibly show a blinking cursor at the end of a completed message
     -- @todo deal with line wraps for long messages
 
     if (self.animation_loop and costatus(self.animation_loop) != 'dead') then
       coresume(self.animation_loop, self)
     elseif (self.animation_loop and self.current_message) then
-      if (btnp(4)) then
+      if (not self.autoplay and btnp(4)) then
+        self.current_message = nil
+        del(animations, self.animation_loop)
+      elseif self.autoplay then
         self.current_message = nil
         del(animations, self.animation_loop)
       end
@@ -80,7 +96,7 @@ dialog = {
       print(self.current_message, self.x, self.y, self.color)
     end
 
-    if (self.message and self.current_message == self.message) then
+    if (not self.autoplay and self.message and self.current_message == self.message) then
       -- @todo make it blink
       -- @todo use a down arrow sprite instead of square
       -- draw end cursor
