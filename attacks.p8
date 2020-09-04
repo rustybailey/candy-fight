@@ -45,7 +45,7 @@ end
 -- attacks
 punch = {
   name = "punch",
-  power = 25,
+  power = 80, -- @todo change back to a lower number when you're finished testing
   element = elements.normal,
   status_effect = nil,
   animation = basic_attack_animation

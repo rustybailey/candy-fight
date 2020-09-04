@@ -19,6 +19,13 @@ function delay(frames)
   end
 end
 
+function merge_tables(a, b)
+  for k,v in pairs(b) do
+    a[k] = v
+  end
+  return a
+end
+
 animations = {}
 
 #include attacks.p8
@@ -222,6 +229,11 @@ function make_candy(candy, x, y, color, is_player)
     attacks = candy.attacks,
     state = nil, -- maybe to be used for status effects?
     update = function(self)
+      -- if anyone's hp is 0, time to end the battle
+      if (self.hp == 0 and #animations == 0) then
+        change_scene(make_end_screen(player))
+      end
+
       -- when you attack, damage the enemy
       if (self.is_player and game_state.is_player_turn and #animations == 0 and btnp(4)) then
         self:selected_attack(enemy)
@@ -294,34 +306,153 @@ function make_candy(candy, x, y, color, is_player)
   }
 end
 
+-- @todo tie game_state and other globals to the individual scene
+function make_scene(options)
+  local o = {
+    init = options.init,
+    update = options.update,
+    draw = options.draw
+  }
+
+  local scene = {
+    init = function(self)
+      self.objects = {}
+      if (self.music) then
+        music(self.music)
+      else
+        music(-1)
+      end
+      o.init(self)
+    end,
+    add = function(self, object)
+      if (object.init) then
+        object:init()
+      end
+      return add(self.objects, object)
+    end,
+    remove = function(self, object)
+      del(self.objects, object)
+    end,
+    update = function(self)
+      if (o.update) then
+        o.update(self)
+      end
+      for k, object in pairs(self.objects) do
+        if (object.update) then
+          object:update()
+        end
+      end
+    end,
+    draw = function(self)
+      if (o.draw) then
+        o.draw(self)
+      end
+      for k, object in pairs(self.objects) do
+        if (object.draw) then
+          object:draw()
+        end
+      end
+    end
+  }
+  return merge_tables(options, scene)
+end
+
+function change_scene(scene)
+  current_scene = scene
+  current_scene:init()
+end
+
+battle_screen = make_scene({
+  init = function(self)
+    self:add(game_state)
+    player = self:add(make_candy(razor_apple, 10, 68, 8, true))
+    enemy = self:add(make_candy(razor_apple, 100, 13, 9, false))
+    self:add(menu)
+    self:add(dialog)
+
+    for k, attack in pairs(player.attacks) do
+      self:add(attack)
+    end
+
+    for k, attack in pairs(enemy.attacks) do
+      self:add(attack)
+    end
+  end,
+  update = function(self)
+  end,
+  draw = function(self)
+    cls()
+    map()
+  end
+})
+
+function make_end_screen(player)
+  return make_scene({
+    init = function(self)
+      self.did_win = player.hp != 0
+    end,
+    update = function(self)
+      if btnp(4) then
+        change_scene(title_screen)
+      end
+    end,
+    draw = function(self)
+      cls()
+      if (self.did_win) then
+        -- @todo use dialog here. will need to expand it's capabilities
+        -- to display at any y so we can center it in the screen
+        print("you win, champ!", 42, 45, 10)
+      else
+        print("you're a worthless piece of garbage.", 42, 45, 10)
+      end
+    end
+  })
+end
+
+title_screen = make_scene({
+  init = function(self)
+    self.blinking_counter = 0
+  end,
+  update = function(self)
+    self.blinking_counter += 1
+    if self.blinking_counter > 30 then self.blinking_counter = 0 end
+
+    if btnp(4) then
+      change_scene(battle_screen)
+    end
+  end,
+  draw = function(self)
+    cls()
+
+    -- @todo instead of magic numbers, use the word length to help position on x
+    print("candy fight", 42, 45, 10)
+
+    if (self.blinking_counter > 15) then
+      print("press ❎ or 🅾️ to start", 20, 70, 10)
+    end
+
+    print("a game by", 2, 100, 10)
+    print("rusty bailey &", 2, 107, 10)
+    print("matt rathbun", 2, 114, 10)
+  end
+})
+
+current_scene = title_screen
+-- current_scene = battle_screen
+
+-- player = {hp = 0}
+-- current_scene = make_end_screen(player)
+
 function _init()
-  add(game_objects, game_state)
-  player = add(game_objects, make_candy(razor_apple, 10, 68, 8, true))
-  enemy = add(game_objects, make_candy(razor_apple, 100, 13, 9, false))
-  add(game_objects, menu)
-  add(game_objects, dialog)
-
-  for k, attack in pairs(player.attacks) do
-    add(game_objects, attack)
-  end
-
-  for k, attack in pairs(enemy.attacks) do
-    add(game_objects, attack)
-  end
+  current_scene:init()
 end
 
 function _update()
-  for k, game_object in pairs(game_objects) do
-    game_object:update()
-  end
+  current_scene:update()
 end
 
 function _draw()
-  cls()
-  map()
-  for k, game_object in pairs(game_objects) do
-    game_object:draw()
-  end
+  current_scene:draw()
 end
 
 __gfx__
