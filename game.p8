@@ -2,9 +2,6 @@ pico-8 cartridge // http://www.pico-8.com
 version 29
 __lua__
 
--- a game object should always have an update and draw function
-game_objects = {}
-
 -- @todo change these to be more themed towards candies
 elements = {
   -- this a neutral type that applies no weaknesses or resistances
@@ -30,26 +27,6 @@ animations = {}
 
 #include attacks.p8
 #include candies.p8
-
--- @todo have an end state
-game_state = {
-  is_player_turn = true,
-  listen_for_turn_switch = false,
-  switch_turns = function(self)
-    self.listen_for_turn_switch = true
-  end,
-  update = function(self)
-    if (self.listen_for_turn_switch) then
-      if (#animations == 0) then
-        self.is_player_turn = not self.is_player_turn
-        self.listen_for_turn_switch = false
-        menu:toggle(self.is_player_turn)
-      end
-    end
-  end,
-  draw = function(self)
-  end
-}
 
 dialog = {
   x = 8,
@@ -196,7 +173,7 @@ menu = {
     end
 
     -- draw cursor
-    if (game_state.is_player_turn) then
+    if (current_scene.is_player_turn) then
       local cursor_y = self.y - 1 + (7 * (self.current_selection - 1))
       spr(15, self.x - 11, cursor_y)
     end
@@ -232,19 +209,20 @@ function make_candy(candy, x, y, color, is_player)
       -- if anyone's hp is 0, time to end the battle
       if (self.hp == 0 and #animations == 0) then
         change_scene(make_end_screen(player))
+        return
       end
 
       -- when you attack, damage the enemy
-      if (self.is_player and game_state.is_player_turn and #animations == 0 and btnp(4)) then
+      if (self.is_player and current_scene.is_player_turn and #animations == 0 and btnp(4)) then
         self:selected_attack(enemy)
-        game_state:switch_turns()
+        current_scene:switch_turns()
         menu:toggle(false)
       end
 
       -- if it's not the player's turn, it's not the player, and no animations are happening
-      if (not self.is_player and not game_state.is_player_turn and #animations == 0) then
+      if (not self.is_player and not current_scene.is_player_turn and #animations == 0) then
         self:random_attack(player)
-        game_state:switch_turns()
+        current_scene:switch_turns()
       end
     end,
     random_attack = function(self, victim)
@@ -306,7 +284,6 @@ function make_candy(candy, x, y, color, is_player)
   }
 end
 
--- @todo tie game_state and other globals to the individual scene
 function make_scene(options)
   local o = {
     init = options.init,
@@ -363,8 +340,12 @@ function change_scene(scene)
 end
 
 battle_screen = make_scene({
+  is_player_turn = true,
+  listen_for_turn_switch = false,
+  switch_turns = function(self)
+    self.listen_for_turn_switch = true
+  end,
   init = function(self)
-    self:add(game_state)
     player = self:add(make_candy(razor_apple, 10, 68, 8, true))
     enemy = self:add(make_candy(razor_apple, 100, 13, 9, false))
     self:add(menu)
@@ -379,6 +360,13 @@ battle_screen = make_scene({
     end
   end,
   update = function(self)
+    if (self.listen_for_turn_switch) then
+      if (#animations == 0) then
+        self.is_player_turn = not self.is_player_turn
+        self.listen_for_turn_switch = false
+        menu:toggle(self.is_player_turn)
+      end
+    end
   end,
   draw = function(self)
     cls()
