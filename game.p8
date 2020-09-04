@@ -12,6 +12,13 @@ elements = {
   grass = "grass"
 }
 
+-- helper function to add delay in coroutines
+function delay(frames)
+  for i = 1, frames do
+    yield()
+  end
+end
+
 animations = {}
 
 #include attacks.p8
@@ -40,17 +47,62 @@ game_state = {
   end
 }
 
+-- split string - borrowed from https://www.lexaloffle.com/bbs/?tid=32520
+function split(str,d)
+  local a={}
+  local s=''
+  local tk=''
+
+  while #str>0 do
+    s=sub(str,1,1)
+    str=sub(str,2)
+    if s==d then
+      add(a,tk)
+      tk=''
+    else
+      tk=tk..s
+    end
+  end
+  add(a,tk)
+  return a
+end
+
 dialog = {
-  x = 7,
-  y = 95,
+  x = 8,
+  y = 96,
   color = 7,
   current_message = nil,
   message = nil,
   animation_loop = nil,
-  trigger = function(self, message)
-    self.message = message
+  trigger = function(self, message, autoplay)
+    -- default autoplay to true
+    self.autoplay = type(autoplay) == "nil" and true or autoplay
+    self:format_message(message)
     self.animation_loop = cocreate(self.animate_text)
     add(animations, self.animation_loop)
+  end,
+  format_message = function(self, message)
+    -- split string
+    local words = split(message, " ")
+    self.number_of_lines = 1
+    self.current_line = ''
+
+    -- concat string
+    -- local new_message = {}
+    local new_message = ''
+    for word in all(words) do
+      local delimiter = ' '
+      -- @todo use some math instead of just using 100
+      if ((#self.current_line + #word) * 4 > 110) then
+        delimiter = '\n'
+        self.current_line = ''
+        self.number_of_lines += 1
+      end
+      self.current_line ..= delimiter .. word
+      new_message ..= delimiter .. word
+    end
+
+    self.message = sub(new_message, 2, #new_message)
   end,
   animate_text = function(self)
     for i = 1, #self.message + 1 do
@@ -59,19 +111,25 @@ dialog = {
       if (i % 5 == 0) sfx(2)
       yield()
     end
+
+    if (self.autoplay) then
+      delay(30)
+    end
   end,
   update = function(self)
     -- @todo when you press a button before the animation finishes
     -- it should automatically complete the message
 
-    -- @todo when the message completes, require a button press to continue
     -- @todo possibly show a blinking cursor at the end of a completed message
     -- @todo deal with line wraps for long messages
 
     if (self.animation_loop and costatus(self.animation_loop) != 'dead') then
       coresume(self.animation_loop, self)
     elseif (self.animation_loop and self.current_message) then
-      if (btnp(4)) then
+      if (not self.autoplay and btnp(4)) then
+        self.current_message = nil
+        del(animations, self.animation_loop)
+      elseif self.autoplay then
         self.current_message = nil
         del(animations, self.animation_loop)
       end
@@ -82,17 +140,18 @@ dialog = {
       print(self.current_message, self.x, self.y, self.color)
     end
 
-    if (self.message and self.current_message == self.message) then
+    if (not self.autoplay and self.message and self.current_message == self.message) then
       -- @todo make it blink
       -- @todo use a down arrow sprite instead of square
       -- draw end cursor
-      local top_left_x = self.x + (#self.message * 4) + 2
-      local top_left_y = self.y + 2
+      local square_height = 2
+      local top_left_x = self.x + (#self.current_line * 4) - 2
+      local top_left_y = self.y + ((self.number_of_lines) * 6) - square_height - 2
       rectfill(
         top_left_x,
         top_left_y,
-        top_left_x + 2,
-        top_left_y + 2,
+        top_left_x + square_height,
+        top_left_y + square_height,
         self.color
       )
     end
@@ -198,6 +257,7 @@ function make_candy(candy, x, y, color, is_player)
     attack = function(self, victim, selected_attack)
       selected_attack:trigger(victim)
       dialog:trigger(self.name .. " used " .. selected_attack.name)
+      -- dialog:trigger("this is some really long text that will likely go to the next line you stupid punk")
     end,
     draw = function(self)
       -- draw character
