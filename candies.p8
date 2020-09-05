@@ -7,24 +7,24 @@ razor_apple = {
   defense = 100,
   element = elements.grass,
   attacks = {
-    make_attack(punch),
-    make_attack(kick),
-    make_attack(rot_teeth),
-    make_attack(caramelize)
+    punch,
+    kick,
+    rot_teeth,
+    caramelize
   }
 }
 
-bob = {
-  name = "bob",
+atomic_bomb_ball = {
+  name = "atomic bomb ball",
   sprite = nil,
-  hp = 100,
+  hp = 150,
   attack = 100,
   defense = 100,
   element = elements.fire,
   attacks = {
-    make_attack(lazy_punch),
-    make_attack(saunter),
-    make_attack(kick),
-    make_attack(slap)
+    roll_over,
+    hot_under_the_collar,
+    fire_puke,
+    split_atom
   }
 }

@@ -203,7 +203,7 @@ menu = {
 
     -- display attack names
     local attack_display_y = self.y
-    for k, attack in pairs(player.attacks) do
+    for k, attack in pairs(player.attack_objects) do
       local attack_color = k == self.current_selection and 12 or 7
       print(attack.name, self.x, attack_display_y, attack_color)
       attack_display_y += 7
@@ -241,6 +241,7 @@ function make_candy(candy, x, y, color, is_player)
     defense = candy.defense,
     element = candy.element,
     attacks = candy.attacks,
+    attack_objects = {},
     state = nil, -- maybe to be used for status effects?
     update = function(self)
       if ((player.hp == 0 or enemy.hp == 0) and #animations == 0) then
@@ -261,11 +262,11 @@ function make_candy(candy, x, y, color, is_player)
       end
     end,
     random_attack = function(self, victim)
-      local random_attack = self.attacks[flr(rnd(4)) + 1]
+      local random_attack = self.attack_objects[flr(rnd(4)) + 1]
       self:attack(victim, random_attack)
     end,
     selected_attack = function(self, victim)
-      local selected_attack = self.attacks[menu.current_selection]
+      local selected_attack = self.attack_objects[menu.current_selection]
       self:attack(victim, selected_attack)
     end,
     attack = function(self, victim, selected_attack)
@@ -315,6 +316,11 @@ function make_candy(candy, x, y, color, is_player)
 
       -- display hp numbers
       print(hp_text, hp_x, self.y + 12, 6)
+    end,
+    init = function(self)
+      foreach(self.attacks, function(attack)
+        add(self.attack_objects, make_attack(attack))
+      end)
     end
   }
 end
@@ -338,7 +344,7 @@ function make_scene(options)
     end,
     add = function(self, object)
       if (object.init) then
-        object:init()
+        object:init(object)
       end
       return add(self.objects, object)
     end,
@@ -383,17 +389,18 @@ battle_screen = make_scene({
     self.listen_for_turn_switch = false
 
     player = self:add(make_candy(razor_apple, 10, 68, 8, true))
-    enemy = self:add(make_candy(razor_apple, 100, 13, 9, false))
+    -- enemy = self:add(make_candy(razor_apple, 100, 13, 9, false))
+    enemy = self:add(make_candy(atomic_bomb_ball, 100, 13, 9, false))
     self:add(menu)
     self:add(dialog)
 
-    for k, attack in pairs(player.attacks) do
+    foreach(player.attack_objects, function(attack)
       self:add(attack)
-    end
+    end)
 
-    for k, attack in pairs(enemy.attacks) do
+    foreach(enemy.attack_objects, function(attack)
       self:add(attack)
-    end
+    end)
   end,
   update = function(self)
     if (self.listen_for_turn_switch) then
@@ -476,8 +483,9 @@ story_screen = make_scene({
   y = 88,
   init = function(self)
     self:add(dialog)
-    local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages in battle with your friend's candy."
-    -- local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages."
+    -- local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages in battle with your friend's candy."
+    local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages."
+    -- local message = "test"
     dialog:trigger(message, false)
   end,
   update = function(self)

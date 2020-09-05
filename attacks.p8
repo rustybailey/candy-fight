@@ -3,20 +3,20 @@ function basic_attack_animation(victim)
   y_offset = 0
   animation_frame = 0
 
-  for i = 0, 38 do
+  for i = 0, 20 do
     if (i == 0) sfx(1)
-    if (i == 15) animation_frame = 0
+    if (i == 10) animation_frame = 0
 
     -- display sprite in the middle top of the victim for 4 frames
-    if (animation_frame <= 3) x_offset = ((victim.width - 1) / 2) - 3.5; y_offset = 0
+    if (animation_frame <= 2) x_offset = ((victim.width - 1) / 2) - 3.5; y_offset = 0
     -- display sprite in the right middle of the victim for 4 frames
-    if (animation_frame > 3 and animation_frame <= 6) x_offset = victim.width - 7; y_offset = ((victim.height - 1) / 2) - 3.5
+    if (animation_frame > 2 and animation_frame <= 4) x_offset = victim.width - 7; y_offset = ((victim.height - 1) / 2) - 3.5
     -- display sprite in the middle bottom of the victim for 4 frames
-    if (animation_frame > 6 and animation_frame <= 9) x_offset = ((victim.width - 1) / 2) - 3.5; y_offset = victim.height - 7
+    if (animation_frame > 4 and animation_frame <= 6) x_offset = ((victim.width - 1) / 2) - 3.5; y_offset = victim.height - 7
     -- display sprite in the left middle of the victim for 4 frames
-    if (animation_frame > 9 and animation_frame <= 12) x_offset = 0; y_offset = ((victim.height - 1) / 2) - 3.5
+    if (animation_frame > 6 and animation_frame <= 8) x_offset = 0; y_offset = ((victim.height - 1) / 2) - 3.5
     -- display sprite in the middle of the victim for 4 frames
-    if (animation_frame > 12) x_offset = ((victim.width - 1) / 2) - 3.5; y_offset = ((victim.height - 1) / 2) - 3.5
+    if (animation_frame > 8) x_offset = ((victim.width - 1) / 2) - 3.5; y_offset = ((victim.height - 1) / 2) - 3.5
 
     animation_frame = animation_frame + 1
 
@@ -29,10 +29,10 @@ function screen_shake_animation()
   x = 20
   travel = 1
 
-  for i = 0, 30 do
-    -- every 5 frames, alternate direction and reduce
+  for i = 0, 15 do
+    -- every 3 frames, alternate direction and reduce
     -- shake by 20%
-    if (i % 5 == 0) x = x * -1 * travel; travel -= 0.2
+    if (i % 3 == 0) x = x * -1 * travel; travel -= 0.2
 
     camera(x, 0)
     yield()
@@ -45,7 +45,7 @@ end
 -- attacks
 punch = {
   name = "punch",
-  power = 80, -- @todo change back to a lower number when you're finished testing
+  power = 10, -- @todo change back to a lower number when you're finished testing
   element = elements.normal,
   status_effect = nil,
   animation = basic_attack_animation
@@ -76,25 +76,33 @@ caramelize = {
   animation = basic_attack_animation
 }
 
-lazy_punch = {
-  name = "lazy punch",
+roll_over = {
+  name = "roll over",
   power = 1,
   element = elements.normal,
   status_effect = nil,
   animation = basic_attack_animation
 }
 
-saunter = {
-  name = "saunter",
+hot_under_the_collar = {
+  name = "hot under the collar",
   power = 5,
   element = elements.normal,
   status_effect = nil,
   animation = basic_attack_animation
 }
 
-slap = {
-  name = "slap",
-  power = 60,
+fire_puke = {
+  name = "fire puke",
+  power = 10,
+  element = elements.normal,
+  status_effect = nil,
+  animation = basic_attack_animation
+}
+
+split_atom = {
+  name = "split atom",
+  power = 20,
   element = elements.normal,
   status_effect = nil,
   animation = basic_attack_animation
@@ -110,7 +118,8 @@ function make_attack(attack)
     victim = nil,
     animation_loops = {},
     trigger = function(self, victim)
-      add(self.animation_loops, cocreate(self.animation))
+      -- if the attack has an animation, add it
+      if (self.animation) add(self.animation_loops, cocreate(self.animation))
       if (victim.is_player) then
         -- if the victim is the player, add the screen shake
         add(self.animation_loops, cocreate(screen_shake_animation))
