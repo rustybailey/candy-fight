@@ -488,8 +488,8 @@ story_screen = make_scene({
   init = function(self)
     self:add(dialog)
     -- local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages in battle with your friend's candy."
-    -- local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages."
-    local message = "test"
+    local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages."
+    -- local message = "test"
     dialog:trigger(message, false)
   end,
   update = function(self)
