@@ -76,32 +76,33 @@ caramelize = {
   animation = basic_attack_animation
 }
 
-roll_over = {
-  name = "roll over",
+pop = {
+  name = "pop",
   power = 1,
   element = elements.normal,
   status_effect = nil,
   animation = basic_attack_animation
 }
 
-hot_under_the_collar = {
-  name = "hot under the collar",
+bang = {
+  name = "bang",
   power = 5,
   element = elements.normal,
   status_effect = nil,
   animation = basic_attack_animation
 }
 
-fire_puke = {
-  name = "fire puke",
+boom = {
+  name = "boom",
   power = 10,
   element = elements.normal,
   status_effect = nil,
   animation = basic_attack_animation
 }
 
-split_atom = {
-  name = "split atom",
+-- @todo make this lower enemy defense
+settle_down = {
+  name = "settle down",
   power = 20,
   element = elements.normal,
   status_effect = nil,
