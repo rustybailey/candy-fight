@@ -206,9 +206,7 @@ function make_candy(candy, x, y, color, is_player)
     attacks = candy.attacks,
     state = nil, -- maybe to be used for status effects?
     update = function(self)
-      -- if anyone's hp is 0, time to end the battle
-      if (self.hp == 0 and #animations == 0) then
-        change_scene(make_end_screen(player))
+      if ((player.hp == 0 or enemy.hp == 0) and #animations == 0) then
         return
       end
 
@@ -369,6 +367,11 @@ battle_screen = make_scene({
         menu:toggle(self.is_player_turn)
       end
     end
+
+    -- if anyone's hp is 0, time to end the battle
+    if ((player.hp == 0 or enemy.hp == 0) and #animations == 0) then
+      change_scene(make_end_screen(player))
+    end
   end,
   draw = function(self)
     cls()
@@ -383,17 +386,22 @@ function make_end_screen(player)
     end,
     update = function(self)
       if btnp(4) then
-        change_scene(title_screen)
+        if self.did_win then
+          change_scene(title_screen)
+        else
+          change_scene(battle_screen)
+        end
       end
     end,
     draw = function(self)
       cls()
       if (self.did_win) then
-        -- @todo use dialog here. will need to expand it's capabilities
+        -- @todo maybe use dialog here? would need to expand it's capabilities
         -- to display at any y so we can center it in the screen
-        print("you win, champ!", 42, 45, 10)
+        print("you win, champ!", 35, 45, 10)
       else
-        print("you're a worthless piece of garbage.", 42, 45, 10)
+        print("you're a worthless\n piece of garbage", 30, 45, 10)
+        print("retry?", 52, 75, 10)
       end
     end
   })
