@@ -155,7 +155,7 @@ dialog = {
       local cursor_y = self.y + ((self.current_line_count - 1) * 6) - 3
 
       if self.blinking_counter > 15 then
-        spr(33, cursor_x, cursor_y)
+        spr(32, cursor_x, cursor_y)
       end
     end
 
@@ -504,9 +504,74 @@ story_screen = make_scene({
   end
 })
 
+map_screen = make_scene({
+  char_sprites = {34, 33, 35, 33},
+  starting_circle_x = 10,
+  circle_increment = 35,
+  init = function(self)
+    self.current_sprite_index = 1
+    self.animation_timer = 0
+    self.start_pos = 1
+    self.character_x = self.starting_circle_x - 4 + (self.circle_increment * (self.start_pos - 1))
+  end,
+  update = function(self)
+    -- @todo: add delay at beginning and end of transition
+    -- @todo: add walking sfx
+    if (self.animation_timer % 5 == 0) then
+      self.current_sprite_index += 1
+      if self.current_sprite_index > #self.char_sprites then
+        self.current_sprite_index = 1
+      end
+    end
+
+    self.animation_timer += 1
+    if self.animation_timer >= 30 then self.animation_timer = 0 end
+
+    if (self.animation_timer % 2 == 0) then
+      self.character_x += 1
+    end
+
+    local next_circle_x = self.starting_circle_x - 4 + (self.circle_increment * self.start_pos)
+    if (self.character_x > next_circle_x) then
+      change_scene(battle_screen)
+    end
+  end,
+  draw = function(self)
+    cls()
+    local circle_x = self.starting_circle_x
+    local circle_y = 70
+    local circle_increment = self.circle_increment
+    local num_circles = 4
+
+    -- draw line
+    rectfill(
+      self.starting_circle_x,
+      circle_y - 1,
+      self.starting_circle_x + (self.circle_increment * (num_circles - 1)),
+      circle_y + 1,
+      3
+    )
+
+    -- draw character
+    spr(
+      self.char_sprites[self.current_sprite_index],
+      self.character_x,
+      circle_y - 15
+    )
+
+    -- @todo: change to 3 and draw skull in last place
+    -- draw circles
+    for i = 0, num_circles do
+      circfill(circle_x, circle_y, 4, 7)
+      circle_x += circle_increment
+    end
+  end
+})
+
 current_scene = title_screen
 -- current_scene = story_screen
 -- current_scene = battle_screen
+-- current_scene = map_screen
 
 -- player = {hp = 0}
 -- current_scene = make_end_screen(player)
@@ -546,14 +611,14 @@ __gfx__
 00000000c60000000000006c057777500000000000004400000566676600000000000000000000000000000000000000000000000000000000000000a00a0000
 00000000c60000000000006c05575550000000000888044088805777666000000000000000000000000000000000000000000000000000000000000000000000
 00000000c60000000000006c00050000000088888888884888885677766600000dddddddddddddddddddddddddddd0000dddddddddddddddddddddddddddd000
-00000000777770000000000000000000008888888888834388888567660600000dddddddddddddddddddddddddddd0000dedfdddddddddddddddddddddddd000
-00000000077700000000000000000000000888888888833388888566666660000dddd77dddddddddddddddddddddd0000ddfdddddddddddddddddefdddddd000
-00000000007000000000000000000000000556888888888888888888866606000dd77227ddddddddddddddddddddd0000ddfd6dddddddddddddddeedddddd000
-0000000000000000000000000000000000005649a88d888888888888886666000d722222d777d777dd7dddddddddd0000ddddd6ddddddddddddd6dddddddd000
-0000000000000000000000000000000000000559a888f88888888888888666600d722dd2722272227d2777dd77ddd0000ddddd77ddddddddddd6ddddddddd000
-000000000000000000000000000000000000065548888f4488888888888666600d722d2227dd27dd27272277227dd0000ddd77997ddddddddd6dddddddddd000
-0000000000000000000000000000000000000056a888844888888888888666600d722dd2227d227d2272d222d227d0000dd799999d777d777dd7ddddddddd000
-0000000000000000000000000000000000000056aa8888888d888888888666600dd722dd227d227d227dd22dd227d0000dd799dd9799979997d9777dd77dd000
+77777000008888000088880000888800008888888888834388888567660600000dddddddddddddddddddddddddddd0000dedfdddddddddddddddddddddddd000
+07770000088888800888888008888880000888888888833388888566666660000dddd77dddddddddddddddddddddd0000ddfdddddddddddddddddefdddddd000
+00700000707777077077770770777707000556888888888888888888866606000dd77227ddddddddddddddddddddd0000ddfd6dddddddddddddddeedddddd000
+0000000077077077770770777707707700005649a88d888888888888886666000d722222d777d777dd7dddddddddd0000ddddd6ddddddddddddd6dddddddd000
+0000000007744770077447700774477000000559a888f88888888888888666600d722dd2722272227d2777dd77ddd0000ddddd77ddddddddddd6ddddddddd000
+000000000cccccc07cccccc00cccccc70000065548888f4488888888888666600d722d2227dd27dd27272277227dd0000ddd77997ddddddddd6dddddddddd000
+000000007cccccc70ccccc7007ccccc000000056a888844888888888888666600d722dd2227d227d2272d222d227d0000dd799999d777d777dd7ddddddddd000
+0000000001100110011000000000011000000056aa8888888d888888888666600dd722dd227d227d227dd22dd227d0000dd799dd9799979997d9777dd77dd000
 00000000000000000000000000000000000000569a888888f8888888885666000dd722dd227d227d227d227d227dd0000dd799d9997dd97dd97979977997dd00
 00000000000000000000000000000000000000569a888884f4888888888566000dd72222227d227d227dd7dd227dd00000d799dd9997d997d9979d999d997d00
 00000000000000000000000000000000000000549488888448888888888560000dd722222722772277dddddd27ddd00000dd799dd997d997d997dd99dd997d00
