@@ -40,8 +40,10 @@ dialog = {
     self.current_message = ''
     self.messages_by_line = nil
     self.animation_loop = nil
-    self.current_lines = 1
+    self.current_line_in_table = 1
+    self.current_line_count = 1
     self.pause_dialog = false
+    self.blinking_counter = 0
     self:format_message(message)
     self.animation_loop = cocreate(self.animate_text)
     add(animations, self.animation_loop)
@@ -95,6 +97,7 @@ dialog = {
     -- if we each the max lines, pause the coroutine
     -- wait for input in update before proceeding
     for k, line in pairs(self.messages_by_line) do
+      self.current_line_in_table = k
       for i = 1, #line do
         self.current_message ..= sub(line, i, i)
 
@@ -102,8 +105,8 @@ dialog = {
         yield()
       end
       self.current_message ..= '\n'
-      self.current_lines += 1
-      if (self.current_lines > self.max_lines) then
+      self.current_line_count += 1
+      if ((self.current_line_count > self.max_lines) or (self.current_line_in_table == #self.messages_by_line and not self.autoplay)) then
         self.pause_dialog = true
         yield()
       end
@@ -117,16 +120,13 @@ dialog = {
     -- @todo when you press a button before the animation finishes
     -- it should automatically complete the message
 
-    -- @todo possibly show a blinking cursor at the end of a completed message
-    -- @todo deal with line wraps for long messages
-
     if (self.animation_loop and costatus(self.animation_loop) != 'dead') then
       if (not self.pause_dialog) then
         coresume(self.animation_loop, self)
       else
         if btnp(4) then
           self.pause_dialog = false
-          self.current_lines = 1
+          self.current_line_count = 1
           self.current_message = ''
         end
       end
@@ -134,27 +134,27 @@ dialog = {
       if (self.autoplay) self.current_message = ''
       del(animations, self.animation_loop)
     end
+
+    if (not self.autoplay) then
+      self.blinking_counter += 1
+      if self.blinking_counter > 30 then self.blinking_counter = 0 end
+    end
   end,
   draw = function(self)
+    -- display message
     if (self.current_message) then
       print(self.current_message, self.x, self.y, self.color)
     end
 
-    -- @todo fix this. it's no longer working after converting to an array of lines
-    if (not self.autoplay and self.message and self.current_message == self.message) then
-      -- @todo make it blink
-      -- @todo use a down arrow sprite instead of square
-      -- draw end cursor
-      local square_height = 2
-      local top_left_x = self.x + (#self.current_line_msg * 4) - 2
-      local top_left_y = self.y + ((self.num_lines) * 6) - square_height - 2
-      rectfill(
-        top_left_x,
-        top_left_y,
-        top_left_x + square_height,
-        top_left_y + square_height,
-        self.color
-      )
+    -- draw blinking cursor at the end of the line
+    if (not self.autoplay and self.pause_dialog) then
+      local sprite_height = 4
+      local cursor_x = self.x + ((#self.messages_by_line[self.current_line_in_table] + 1) * 4) - 2
+      local cursor_y = self.y + ((self.current_line_count - 1) * 6) - 3
+
+      if self.blinking_counter > 15 then
+        spr(33, cursor_x, cursor_y)
+      end
     end
 
     -- debugging formatted message
@@ -477,6 +477,7 @@ story_screen = make_scene({
   init = function(self)
     self:add(dialog)
     local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages in battle with your friend's candy."
+    -- local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages."
     dialog:trigger(message, false)
   end,
   update = function(self)
@@ -532,6 +533,9 @@ __gfx__
 00000000c60000000000006c00577775000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000c60000000000006c00557555000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000c60000000000006c00005000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000777770000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000077700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000007000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 0107070707070707070707070707070200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0500000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
