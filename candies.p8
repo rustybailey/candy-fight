@@ -1,7 +1,7 @@
 -- unique candies
 razor_apple = {
   name = "razor apple",
-  sprite = nil,
+  sprite = 20,
   hp = 100,
   attack = 100,
   defense = 100,
