@@ -134,11 +134,13 @@ dialog = {
 menu = {
   x = 76,
   y = 95,
-  current_selection = 1,
   max_attacks = 4,
-  is_visible = true,
   toggle = function(self, should_show)
     self.is_visible = should_show
+  end,
+  init = function(self)
+    self.is_visible = true
+    self.current_selection = 1
   end,
   update = function(self)
     if not self.is_visible then return end
@@ -344,7 +346,6 @@ battle_screen = make_scene({
   init = function(self)
     self.is_player_turn = true
     self.listen_for_turn_switch = false
-    menu:toggle(true)
 
     player = self:add(make_candy(razor_apple, 10, 68, 8, true))
     enemy = self:add(make_candy(razor_apple, 100, 13, 9, false))
