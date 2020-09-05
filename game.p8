@@ -34,6 +34,9 @@ dialog = {
   color = 7,
   max_chars_per_line = 24,
   max_lines = 4,
+  init = function(self)
+    self.blinking_counter = 0
+  end,
   trigger = function(self, message, autoplay)
     -- default autoplay to true
     self.autoplay = type(autoplay) == "nil" and true or autoplay
@@ -43,7 +46,6 @@ dialog = {
     self.current_line_in_table = 1
     self.current_line_count = 1
     self.pause_dialog = false
-    self.blinking_counter = 0
     self:format_message(message)
     self.animation_loop = cocreate(self.animate_text)
     add(animations, self.animation_loop)
