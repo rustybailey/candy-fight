@@ -512,18 +512,37 @@ title_screen = make_scene({
 
 story_screen = make_scene({
   init = function(self)
+    self.t = 0
     self:add(dialog)
-    -- local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages in battle with your friend's candy."
-    -- dialog:trigger(message, false)
-    dialog:trigger('test')
+    local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages in battle with your friend's candy."
+    dialog:trigger(message, false)
+    -- dialog:trigger('test')
   end,
   update = function(self)
+
+
     if (#animations == 0) then
       change_scene(make_battle_scene(razor_apple, battle_enemies[current_battle]))
     end
   end,
   draw = function(self)
     cls()
+
+    -- simple rain effects borrowed from https://www.lexaloffle.com/bbs/?pid=71065#p
+    -- occasional lightning
+    if self.t >= 200 and self.t <= 220 and self.t % 4 == 0 then
+      rectfill(0, 0, 128, 88, 7)
+    end
+
+    self.t = (self.t + 1) % 300
+
+    -- rain
+    for i = 1, 50 do
+      x = flr(rnd(128))
+      y = flr(rnd(85)) + 0
+      line(x, y, x - 3, y + 3)
+    end
+
     map(0, 16)
   end
 })
