@@ -228,7 +228,6 @@ menu = {
   end
 }
 
--- @todo create another candy and display the name in the draw function
 function make_candy(candy, x, y, color, is_player)
   return {
     is_player = is_player,
@@ -386,47 +385,48 @@ function change_scene(scene)
   current_scene:init()
 end
 
-battle_screen = make_scene({
-  switch_turns = function(self)
-    self.listen_for_turn_switch = true
-  end,
-  init = function(self)
-    self.is_player_turn = true
-    self.listen_for_turn_switch = false
+function make_battle_scene(player_candy, enemy_candy)
+  return make_scene({
+    switch_turns = function(self)
+      self.listen_for_turn_switch = true
+    end,
+    init = function(self)
+      self.is_player_turn = true
+      self.listen_for_turn_switch = false
 
-    player = self:add(make_candy(razor_apple, 10, 55, 8, true))
-    -- enemy = self:add(make_candy(razor_apple, 100, 13, 9, false))
-    enemy = self:add(make_candy(boom_pops, 85, 13, 9, false))
-    self:add(menu)
-    self:add(dialog)
+      player = self:add(make_candy(player_candy, 10, 55, 8, true))
+      enemy = self:add(make_candy(enemy_candy, 85, 13, 9, false))
+      self:add(menu)
+      self:add(dialog)
 
-    foreach(player.attack_objects, function(attack)
-      self:add(attack)
-    end)
+      foreach(player.attack_objects, function(attack)
+        self:add(attack)
+      end)
 
-    foreach(enemy.attack_objects, function(attack)
-      self:add(attack)
-    end)
-  end,
-  update = function(self)
-    if (self.listen_for_turn_switch) then
-      if (#animations == 0) then
-        self.is_player_turn = not self.is_player_turn
-        self.listen_for_turn_switch = false
-        menu:toggle(self.is_player_turn)
+      foreach(enemy.attack_objects, function(attack)
+        self:add(attack)
+      end)
+    end,
+    update = function(self)
+      if (self.listen_for_turn_switch) then
+        if (#animations == 0) then
+          self.is_player_turn = not self.is_player_turn
+          self.listen_for_turn_switch = false
+          menu:toggle(self.is_player_turn)
+        end
       end
-    end
 
-    -- if anyone's hp is 0, time to end the battle
-    if ((player.hp == 0 or enemy.hp == 0) and #animations == 0) then
-      change_scene(make_end_screen(player))
+      -- if anyone's hp is 0, time to end the battle
+      if ((player.hp == 0 or enemy.hp == 0) and #animations == 0) then
+        change_scene(make_end_screen(player))
+      end
+    end,
+    draw = function(self)
+      cls()
+      map()
     end
-  end,
-  draw = function(self)
-    cls()
-    map()
-  end
-})
+  })
+end
 
 function make_end_screen(player)
   return make_scene({
@@ -438,7 +438,7 @@ function make_end_screen(player)
         if self.did_win then
           change_scene(title_screen)
         else
-          change_scene(battle_screen)
+          change_scene(make_battle_scene(razor_apple, battle_enemies[current_battle]))
         end
       end
     end,
@@ -485,17 +485,15 @@ title_screen = make_scene({
 })
 
 story_screen = make_scene({
-  x = 0,
-  y = 88,
   init = function(self)
     self:add(dialog)
-    local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages in battle with your friend's candy."
-    -- local message = "test"
-    dialog:trigger(message, false)
+    -- local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages in battle with your friend's candy."
+    -- dialog:trigger(message, false)
+    dialog:trigger('test')
   end,
   update = function(self)
     if (#animations == 0) then
-      change_scene(battle_screen)
+      change_scene(make_battle_scene(razor_apple, battle_enemies[current_battle]))
     end
   end,
   draw = function(self)
@@ -530,7 +528,7 @@ map_screen = make_scene({
 
     -- when finished walking and finished with delay, change scene
     if (self.is_finished_walking) then
-      change_scene(battle_screen)
+      change_scene(make_battle_scene(razor_apple, battle_enemies[current_battle]))
       return
     end
 
@@ -596,13 +594,21 @@ map_screen = make_scene({
   end
 })
 
--- current_scene = title_screen
+current_scene = title_screen
 -- current_scene = story_screen
--- current_scene = battle_screen
-current_scene = map_screen
+-- current_scene = make_battle_scene(razor_apple, battle_enemies[current_battle])
+-- current_scene = map_screen
 
 -- player = {hp = 0}
 -- current_scene = make_end_screen(player)
+
+current_battle = 1
+battle_enemies = {
+  boom_pops,
+  razor_apple,
+  razor_apple,
+  razor_apple
+}
 
 function _init()
   current_scene:init()
