@@ -2,13 +2,6 @@ pico-8 cartridge // http://www.pico-8.com
 version 29
 __lua__
 
--- @todo change these to be more themed towards candies
-elements = {
-  -- this a neutral type that applies no weaknesses or resistances
-  normal = "normal",
-  grass = "grass"
-}
-
 screen_width = 128
 function center_print(message, y, color)
   local width = #message * 4
@@ -250,9 +243,8 @@ function make_candy(candy, x, y, color, is_player)
     name = candy.name,
     sprite = candy.sprite,
     hp = candy.hp,
-    attack = candy.attack,
-    defense = candy.defense,
-    element = candy.element,
+    attack_power = candy.attack_power,
+    defense_rating = candy.defense_rating,
     attacks = candy.attacks,
     attack_objects = {},
     state = nil, -- maybe to be used for status effects?
@@ -349,7 +341,7 @@ function make_candy(candy, x, y, color, is_player)
     end,
     init = function(self)
       foreach(self.attacks, function(attack)
-        add(self.attack_objects, make_attack(attack))
+        add(self.attack_objects, make_attack(self, attack))
       end)
     end
   }

@@ -3,9 +3,8 @@ razor_apple = {
   name = "razor apple",
   sprite = 20,
   hp = 100,
-  attack = 100,
-  defense = 100,
-  element = elements.grass,
+  attack_power = 100,
+  defense_rating = 100,
   attacks = {
     punch,
     kick,
@@ -18,9 +17,8 @@ boom_pops = {
   name = "boom pops",
   sprite = 28,
   hp = 100,
-  attack = 100,
-  defense = 100,
-  element = elements.fire,
+  attack_power = 100,
+  defense_rating = 100,
   attacks = {
     pop,
     bang,
