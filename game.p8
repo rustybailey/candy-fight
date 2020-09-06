@@ -110,8 +110,13 @@ dialog = {
       for i = 1, #line do
         self.current_message ..= sub(line, i, i)
 
-        if (i % 5 == 0) sfx(2)
-        yield()
+        -- press btn 5 to skip to the end of the current passage
+        -- otherwise, print 1 character per frame
+        -- with sfx about every 5 frames
+        if (not btnp(5)) then
+          if (i % 5 == 0) sfx(2)
+          yield()
+        end
       end
       self.current_message ..= '\n'
       self.current_line_count += 1
@@ -519,8 +524,6 @@ story_screen = make_scene({
     -- dialog:trigger('test')
   end,
   update = function(self)
-
-
     if (#animations == 0) then
       change_scene(make_battle_scene(razor_apple, battle_enemies[current_battle]))
     end
