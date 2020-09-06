@@ -9,7 +9,7 @@ elements = {
   grass = "grass"
 }
 
-screen_width = screen_width
+screen_width = 128
 function center_print(message, y, color)
   local width = #message * 4
   local x = (screen_width - width) / 2
