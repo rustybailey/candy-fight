@@ -9,6 +9,13 @@ elements = {
   grass = "grass"
 }
 
+screen_width = screen_width
+function center_print(message, y, color)
+  local width = #message * 4
+  local x = (screen_width - width) / 2
+  print(message, x, y, color)
+end
+
 -- helper function to add delay in coroutines
 function delay(frames)
   for i = 1, frames do
@@ -298,29 +305,42 @@ function make_candy(candy, x, y, color, is_player)
       local padding = 7
       -- position player elements to the right
       if (self.is_player) then
-        name_x = 128 - (#self.name * 4) - padding
+        name_x = screen_width - (#self.name * 4) - padding
         bar_x = 75
-        hp_x = 128 - (#hp_text * 4) - padding
+        hp_x = screen_width - (#hp_text * 4) - padding
+        y_offset = 12
       -- position enemy elements to the left
       else
         name_x = padding + 2
         bar_x = padding
         hp_x = padding + 2
+        y_offset = -5
       end
 
       -- display name
-      print(self.name, name_x, self.y, 6)
+      print(self.name, name_x, self.y + y_offset, 6)
 
       -- display health bar
       local bar_length = 46
       local health_length = flr(bar_length * (self.hp / 100))
-      line(bar_x, self.y + 8, (bar_x + bar_length), self.y + 8, 2)
+      local bar_y = self.y + y_offset + 8
+      -- background bar
+      line(bar_x, bar_y, (bar_x + bar_length), bar_y, 2)
+      -- health percentage
       if (self.hp > 0) then
-        line(bar_x, self.y + 8, (bar_x + health_length), self.y + 8, 10)
+        local line_color = 0
+        if self.hp <= 100 and self.hp > 75 then
+          line_color = 11
+        elseif self.hp <= 74 and self.hp > 25 then
+          line_color = 10
+        else
+          line_color = 8
+        end
+        line(bar_x, bar_y, (bar_x + health_length), bar_y, line_color)
       end
 
       -- display hp numbers
-      print(hp_text, hp_x, self.y + 12, 6)
+      print(hp_text, hp_x, self.y + y_offset + 12, 6)
     end,
     init = function(self)
       foreach(self.attacks, function(attack)
@@ -401,7 +421,7 @@ function make_battle_scene(player_candy, enemy_candy)
       self.is_player_turn = true
       self.listen_for_turn_switch = false
 
-      player = self:add(make_candy(player_candy, 10, 55, 8, true))
+      player = self:add(make_candy(player_candy, 10, 54, 8, true))
       enemy = self:add(make_candy(enemy_candy, 85, 13, 9, false))
       self:add(menu)
       self:add(dialog)
@@ -454,10 +474,10 @@ function make_end_screen(player)
       if (self.did_win) then
         -- @todo maybe use dialog here? would need to expand it's capabilities
         -- to display at any y so we can center it in the screen
-        print("you win, champ!", 35, 45, 10)
+        center_print("you win, champ!", 45, 10)
       else
-        print("you're a worthless\n piece of garbage", 30, 45, 10)
-        print("retry?", 52, 75, 10)
+        center_print("you're a worthless\n piece of garbage", 45, 10)
+        center_print("retry?", 75, 10)
       end
     end
   })
@@ -478,11 +498,10 @@ title_screen = make_scene({
   draw = function(self)
     cls()
 
-    -- @todo instead of magic numbers, use the word length to help position on x
-    print("candy fight", 42, 45, 10)
+    center_print("candy fight", 45, 10)
 
     if (self.blinking_counter > 15) then
-      print("press ❎ or 🅾️ to start", 20, 70, 10)
+      center_print("press ❎ or 🅾️ to start", 70, 10)
     end
 
     print("a game by", 2, 100, 10)
@@ -597,7 +616,7 @@ map_screen = make_scene({
 
     -- get ready!
     if (self.is_finished_walking) then
-      print('get ready!', 40, 40, 7)
+      center_print('get ready!', 40, 7)
     end
   end
 })
