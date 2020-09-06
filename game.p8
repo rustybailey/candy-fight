@@ -390,6 +390,13 @@ function make_battle_scene(player_candy, enemy_candy)
     switch_turns = function(self)
       self.listen_for_turn_switch = true
     end,
+    end_battle = function(self)
+      if (enemy.hp == 0 and current_battle < #battle_enemies) then
+        change_scene(map_screen)
+      else
+        change_scene(make_end_screen(player))
+      end
+    end,
     init = function(self)
       self.is_player_turn = true
       self.listen_for_turn_switch = false
@@ -418,7 +425,7 @@ function make_battle_scene(player_candy, enemy_candy)
 
       -- if anyone's hp is 0, time to end the battle
       if ((player.hp == 0 or enemy.hp == 0) and #animations == 0) then
-        change_scene(make_end_screen(player))
+        self:end_battle()
       end
     end,
     draw = function(self)
@@ -509,7 +516,7 @@ map_screen = make_scene({
   init = function(self)
     self.current_sprite_index = 1
     self.animation_timer = 0
-    self.start_pos = 1
+    self.start_pos = current_battle
     self.is_finished_walking = false
     self.character_x = self.starting_circle_x - 4 + (self.circle_increment * (self.start_pos - 1))
     self.next_circle_x = self.character_x + self.circle_increment
@@ -528,6 +535,7 @@ map_screen = make_scene({
 
     -- when finished walking and finished with delay, change scene
     if (self.is_finished_walking) then
+      current_battle += 1
       change_scene(make_battle_scene(razor_apple, battle_enemies[current_battle]))
       return
     end
@@ -564,7 +572,7 @@ map_screen = make_scene({
     rectfill(
       self.starting_circle_x,
       circle_y - 1,
-      self.starting_circle_x + (self.circle_increment * (num_circles - 1)),
+      self.starting_circle_x + (self.circle_increment * (num_circles - 1)) + 2,
       circle_y + 1,
       3
     )
@@ -580,7 +588,7 @@ map_screen = make_scene({
     for i = 0, num_circles do
       if (i == num_circles - 1) then
         -- draw a skull in the last slot
-        spr(48, circle_x - 5, circle_y - 4)
+        spr(48, circle_x - 3, circle_y - 4)
       else
         circfill(circle_x, circle_y, 3, 7)
       end
