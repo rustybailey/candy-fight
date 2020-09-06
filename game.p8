@@ -505,18 +505,28 @@ story_screen = make_scene({
 })
 
 map_screen = make_scene({
-  char_sprites = {34, 33, 35, 33},
+  char_sprites = {33, 35, 33, 34},
   starting_circle_x = 10,
   circle_increment = 35,
   init = function(self)
     self.current_sprite_index = 1
     self.animation_timer = 0
     self.start_pos = 1
+    self.is_finished_walking = false
     self.character_x = self.starting_circle_x - 4 + (self.circle_increment * (self.start_pos - 1))
+    self.next_circle_x = self.character_x + self.circle_increment
   end,
   update = function(self)
-    -- @todo: add delay at beginning and end of transition
-    -- @todo: add walking sfx
+    self.animation_timer += 1
+    if (self.animation_timer < 15) then
+      return
+    end
+
+    if (self.is_finished_walking) then
+      change_scene(battle_screen)
+      return
+    end
+
     if (self.animation_timer % 5 == 0) then
       self.current_sprite_index += 1
       if self.current_sprite_index > #self.char_sprites then
@@ -524,16 +534,18 @@ map_screen = make_scene({
       end
     end
 
-    self.animation_timer += 1
-    if self.animation_timer >= 30 then self.animation_timer = 0 end
-
     if (self.animation_timer % 2 == 0) then
       self.character_x += 1
     end
 
-    local next_circle_x = self.starting_circle_x - 4 + (self.circle_increment * self.start_pos)
-    if (self.character_x > next_circle_x) then
-      change_scene(battle_screen)
+    if (self.animation_timer % 10 == 0) then
+      sfx(3)
+    end
+
+    if (self.character_x >= self.next_circle_x) then
+      self.current_sprite_index = 1
+      self.is_finished_walking = true
+      self.animation_timer = 0
     end
   end,
   draw = function(self)
@@ -568,10 +580,10 @@ map_screen = make_scene({
   end
 })
 
-current_scene = title_screen
+-- current_scene = title_screen
 -- current_scene = story_screen
 -- current_scene = battle_screen
--- current_scene = map_screen
+current_scene = map_screen
 
 -- player = {hp = 0}
 -- current_scene = make_end_screen(player)
@@ -672,7 +684,7 @@ __sfx__
 0003000022050190501cb0025b0025b0025b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b0000b00
 000300000c1500d150286501d650116500f6500d6500d1000d1000e100121001510019100201002b1003010017500165001550015500185001d50024500275002c5002e500005000050000500005000050000500
 000500001f7500a7501e750097501f700087001d7000970020700097001e7001870016700157001570014700147001470016700177001b7002670031700007000070000700007000070000700007000070000700
-000500001f7000a7001e70009700287002670025700247002470025700277002a7002e70039700007000070000700007000070000700007000070000700007000070000700007000070000700007000070000700
+01080000106550a6001e60009600286002660025600246002460025600276002a6002e60039600006000060000600006000060000600006000060000600006000060000600006000060000600006000060000600
 000500001f7000a700127000f7000e7000d7000d7000d7000d7000f700177002b7003070000700007000070000700007000070000700007000070000700007000070000700007000070000700007000070000700
 0003000019700197001c7001e70000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000400001c70020700267002e70000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
