@@ -250,18 +250,37 @@ function make_candy(candy, x, y, color, is_player)
     name = candy.name,
     sprite = candy.sprite,
     hp = candy.hp,
+    max_hp = candy.max_hp,
     attack_power = candy.attack_power,
     defense_rating = candy.defense_rating,
     abilities = candy.abilities,
     ability_objects = {},
     status_effects = {},
+    is_using_ability = false,
+    selected_ability = nil,
+    victim = nil,
     update = function(self)
       if ((player.hp == 0 or enemy.hp == 0) and #animations == 0) then
         return
       end
 
+      -- if is_using_ability = true and #animations == 0, is_using_ability = false,
+      -- unset self.selected_ability and unset self.victim
+      -- if (self.is_using_ability and #animations == 0) then
+      --   self.is_using_ability = false
+      --   self.selected_ability = nil
+      --   self.victim = nil
+      -- end
+
+      -- if #animations == 0 and self.selected_ability and self.victim,
+      -- trigger selected ability and set is_using_ability = true
+      -- if (#animations == 0 and self.selected_ability and self.victim) then
+      --   self.is_using_ability = true
+      --   self.selected_ability:trigger(self.victim)
+      -- end
+
       -- when you use an ability, do something
-      if (self.is_player and current_scene.is_player_turn and #animations == 0 and btnp(4)) then
+      if (not self.is_using_ability and self.is_player and current_scene.is_player_turn and #animations == 0 and btnp(4)) then
         self:selected_ability(enemy)
         self:apply_status_effects()
         current_scene:switch_turns()
@@ -269,23 +288,28 @@ function make_candy(candy, x, y, color, is_player)
       end
 
       -- if it's not the player's turn, it's not the player, and no animations are happening
-      if (not self.is_player and not current_scene.is_player_turn and #animations == 0) then
+      if (not self.is_using_ability and not self.is_player and not current_scene.is_player_turn and #animations == 0) then
         self:random_ability(player)
         self:apply_status_effects()
         current_scene:switch_turns()
       end
     end,
-    random_ability = function(self, victim)
+    random_ability = function(self, opponent)
       local random_ability = self.ability_objects[flr(rnd(4)) + 1]
-      self:use_ability(victim, random_ability)
+      self:use_ability(opponent, random_ability)
     end,
-    selected_ability = function(self, victim)
+    selected_ability = function(self, opponent)
       local selected_ability = self.ability_objects[menu.current_selection]
-      self:use_ability(victim, selected_ability)
+      self:use_ability(opponent, selected_ability)
     end,
-    use_ability = function(self, victim, selected_ability)
-      selected_ability:trigger(victim)
-      dialog:trigger(self.name .. " used " .. selected_ability.name)
+    use_ability = function(self, opponent, selected_ability)
+      dialog:trigger(self.name .. " used " .. selected_ability.name, false)
+      -- self.is_using_ability = true
+      -- self.selected_ability = selected_ability
+      -- self.victim = victim
+
+      selected_ability:trigger(opponent)
+      -- dialog:trigger(self.name .. " used " .. selected_ability.name, false, true)
       -- dialog:trigger("this is some really long text that will likely go to the next line you stupid punk")
     end,
     apply_status_effects = function(self)
