@@ -332,9 +332,9 @@ function make_candy(candy, x, y, color, is_player)
       -- health percentage
       if (self.hp > 0) then
         local line_color = 0
-        if self.hp <= 100 and self.hp > 75 then
+        if self.hp <= 100 and self.hp >= 75 then
           line_color = 11
-        elseif self.hp <= 74 and self.hp > 25 then
+        elseif self.hp <= 74 and self.hp >= 25 then
           line_color = 10
         else
           line_color = 8
