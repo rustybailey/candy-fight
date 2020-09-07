@@ -459,12 +459,29 @@ function make_battle_scene(player_candy, enemy_candy)
   })
 end
 
+colors_light_to_dark = {10,7,15,11,6,9,12,14,13,3,8,4,5,2,1}
 function make_end_screen(player)
+  local did_win = player.hp != 0
+  if (did_win) then
+    fanfare = 4
+  end
+
   return make_scene({
+    music = fanfare,
     init = function(self)
-      self.did_win = player.hp != 0
+      self.did_win = did_win
+      self.counter = 0
+      self.text_color_index = 1
     end,
     update = function(self)
+      self.counter += 1
+      -- counting the full time of the fanfare
+      if (self.counter % 192 == 0) self.counter = 0
+
+      self.text_color_index += 1
+      if (self.text_color_index % #colors_light_to_dark == 0) self.text_color_index = 1
+
+
       if btnp(4) then
         if self.did_win then
           change_scene(title_screen)
@@ -476,9 +493,27 @@ function make_end_screen(player)
     draw = function(self)
       cls()
       if (self.did_win) then
-        -- @todo maybe use dialog here? would need to expand it's capabilities
-        -- to display at any y so we can center it in the screen
-        center_print("you win, champ!", 45, 10)
+        center_print(
+          "you win, champ!",
+          45,
+          colors_light_to_dark[self.text_color_index]
+        )
+
+        local chord_1 = 64
+        local chord_2 = 96
+        local chord_3 = 128
+        local end_of_fanfare = 160
+        local thanks_x = 28
+        local thanks_y = 75
+        if (self.counter > end_of_fanfare) then
+          center_print("thanks for playing", thanks_y, 10)
+        elseif (self.counter > chord_3) then
+          print("thanks for playing", thanks_x, thanks_y, 7)
+        elseif (self.counter > chord_2) then
+          print("thanks for", thanks_x, thanks_y, 7)
+        elseif (self.counter > chord_1) then
+          print("thanks", thanks_x, thanks_y, 7)
+        end
       else
         center_print("you're a worthless\n piece of garbage", 45, 10)
         center_print("retry?", 75, 10)
@@ -580,7 +615,6 @@ story_screen = make_scene({
   draw = function(self)
     cls()
 
-    -- simple rain effects borrowed from https://www.lexaloffle.com/bbs/?pid=71065#p
     -- occasional lightning
     if self.t >= 200 and self.t <= 220 and self.t % 4 == 0 then
       rectfill(0, 0, 128, 88, 7)
@@ -847,9 +881,19 @@ __sfx__
 0120002007552075520755207552075520b5520e55213552175521755213552135520e5520e55211552115520c5520c5520c5420c5320c5220c5120c5020d5001e5001850013500135000e5000e5000650006500
 0120002007552075520755207552075520b5520e55213552185521855213552135520e5520e55213552135521955219552195421953219522195120c5020d5001e5001850013500135000e5000e5000650006500
 011000200c073160730f0750c073246230a0730c0730f0750c073130730f0750c0732462305073070750a0730c07311073110750f0732462307073050730a0750c07313075160730f07324623030730a0750f073
+010400201305013050130501305015050150501505015050170501705017050170501a0501a0501a0501a0501c0501c0501c0501c0501f0501f0501f0501f0502105021050210502105023050230502305023050
+01040020180501805018050180501a0501a0501a0501a0501c0501c0501c0501c0501f0501f0501f0501f05021050210502105021050240502405024050240502605026050260502605028050280502805028050
+011000201d0501d0501d0501d0501d0501d0501d0501d0501b0501b0501b0501b0501b0501b0501b0501b0501d0501d0501d0501d0501d0501d0501d0501d0500000000000000000000000000000000000000000
+011000202405024050240502405024050240502405024050220502205022050220502205022050220502205024050240502405024050240502405024050240500000000000000000000000000000000000000000
+011000202d0502d0502d0502d0502d0502d0502d0502d0502b0502b0502b0502b0502b0502b0502b0502b0502d0502d0502d0502d0502d0502d0502d0502d0500000000000000000000000000000000000000000
+010400201405014050140501405016050160501605016050180501805018050180501b0501b0501b0501b0501d0501d0501d0501d050200502005020050200502205022050220502205024050240502405024050
+010400201b0501b0501b0501b0501d0501d0501d0501d0501f0501f0501f0501f050220502205022050220502405024050240502405027050270502705027050290502905029050290502b0502b0502b0502b050
 __music__
 01 0406074e
 02 4411070e
 01 08490a0f
 02 0b4c0d10
+01 12134344
+00 17184344
+00 14151644
 
