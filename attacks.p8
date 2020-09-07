@@ -1,124 +1,121 @@
--- animations
-function basic_attack_animation(target)
-  x_offset = 0
-  y_offset = 0
-  animation_frame = 0
+effects = {
+  damage = function(attack)
+    bonus = attack.candy.attack_power - attack.target.defense_rating
+    bonus_multiplier = 1 + (bonus / 100)
+    -- don't allow an attack to give back health
+    bonus_multiplier = max(bonus_multiplier, 0)
 
-  for i = 0, 20 do
-    if (i == 0) sfx(1)
-    if (i == 10) animation_frame = 0
-
-    -- display sprite in the middle top of the target for 4 frames
-    if (animation_frame <= 2) x_offset = ((target.width - 1) / 2) - 3.5; y_offset = 0
-    -- display sprite in the right middle of the target for 4 frames
-    if (animation_frame > 2 and animation_frame <= 4) x_offset = target.width - 7; y_offset = ((target.height - 1) / 2) - 3.5
-    -- display sprite in the middle bottom of the target for 4 frames
-    if (animation_frame > 4 and animation_frame <= 6) x_offset = ((target.width - 1) / 2) - 3.5; y_offset = target.height - 7
-    -- display sprite in the left middle of the target for 4 frames
-    if (animation_frame > 6 and animation_frame <= 8) x_offset = 0; y_offset = ((target.height - 1) / 2) - 3.5
-    -- display sprite in the middle of the target for 4 frames
-    if (animation_frame > 8) x_offset = ((target.width - 1) / 2) - 3.5; y_offset = ((target.height - 1) / 2) - 3.5
-
-    animation_frame = animation_frame + 1
-
-    spr(19, target.x + x_offset, target.y + y_offset)
-    yield()
+    -- always subtract whole numbers from the health
+    attack.target.hp -= flr(attack.power * bonus_multiplier)
+    -- don't let target hp fall below zero
+    if (attack.target.hp < 0) attack.target.hp = 0
+  end,
+  apply_statuses = function(attack)
+    if (attack.status_effects != nil and #attack.status_effects > 0) then
+      foreach(attack.status_effects, function(status_effect)
+        status_effect_attack = make_attack(attack.candy, status_effect)
+        add(attack.target.status_effects, status_effect_attack)
+        -- @todo this doesn't feel great here
+        current_scene:add(status_effect_attack)
+      end)
+    end
   end
-end
-
-function screen_shake_animation()
-  x = 20
-  travel = 1
-
-  for i = 0, 15 do
-    -- every 3 frames, alternate direction and reduce
-    -- shake by 20%
-    if (i % 3 == 0) x = x * -1 * travel; travel -= 0.2
-
-    camera(x, 0)
-    yield()
-  end
-
-  -- reset the camera back
-  camera(0, 0)
-end
-
--- post animations
-function apply_damage(attack)
-  bonus = attack.candy.attack_power - attack.target.defense_rating
-  bonus_multiplier = 1 + (bonus / 100)
-  -- don't allow an attack to give back health
-  bonus_multiplier = max(bonus_multiplier, 0)
-
-  -- always subtract whole numbers from the health
-  attack.target.hp -= flr(attack.power * bonus_multiplier)
-  -- don't let target hp fall below zero
-  if (attack.target.hp < 0) attack.target.hp = 0
-end
-
--- attacks
-punch = {
-  name = "punch",
-  power = 10,
-  status_effect = nil,
-  animation = basic_attack_animation,
-  post_animation = apply_damage
 }
 
-kick = {
-  name = "kick",
-  power = 20,
-  status_effect = nil,
-  animation = basic_attack_animation,
-  post_animation = apply_damage
+status_effects = {
+  rot = {
+    name = "rot",
+    power = 10,
+    duration = 5,
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage
+    }
+  }
 }
 
-rot_teeth = {
-  name = "rot teeth",
-  power = 25,
-  status_effect = nil,
-  animation = basic_attack_animation,
-  post_animation = apply_damage
-}
-
-caramelize = {
-  name = "caramelize",
-  power = 0,
-  status_effect = nil,
-  animation = basic_attack_animation,
-  post_animation = apply_damage
-}
-
-pop = {
-  name = "pop",
-  power = 1,
-  status_effect = nil,
-  animation = basic_attack_animation,
-  post_animation = apply_damage
-}
-
-bang = {
-  name = "bang",
-  power = 5,
-  status_effect = nil,
-  animation = basic_attack_animation,
-  post_animation = apply_damage
-}
-
-boom = {
-  name = "boom",
-  power = 10,
-  status_effect = nil,
-  animation = basic_attack_animation,
-  post_animation = apply_damage
-}
-
-settle_down = {
-  name = "settle down",
-  power = 20,
-  status_effect = nil,
-  animation = basic_attack_animation,
-  post_animation = apply_damage
+attacks = {
+  punch = {
+    name = "punch",
+    power = 10,
+    status_effects = {},
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage
+    }
+  },
+  kick = {
+    name = "kick",
+    power = 20,
+    status_effects = {},
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage
+    }
+  },
+  rot_teeth = {
+    name = "rot teeth",
+    power = nil,
+    status_effects = {
+      -- status effect rot with modified values
+      merge_tables(
+        status_effects.rot,
+        {
+          power = 5,
+          duration = 3
+        }
+      )
+    },
+    animation = animations.basic_attack,
+    effects = {
+      effects.apply_statuses
+    }
+  },
+  caramelize = {
+    name = "caramelize",
+    power = 0,
+    status_effects = {},
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage
+    }
+  },
+  pop = {
+    name = "pop",
+    power = 1,
+    status_effects = {},
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage
+    }
+  },
+  bang = {
+    name = "bang",
+    power = 5,
+    status_effects = {},
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage
+    }
+  },
+  boom = {
+    name = "boom",
+    power = 10,
+    status_effects = {},
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage
+    }
+  },
+  settle_down = {
+    name = "settle down",
+    power = 20,
+    status_effects = {},
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage
+    }
+  }
 }
 
 function make_attack(candy, attack)
@@ -126,17 +123,20 @@ function make_attack(candy, attack)
     candy = candy,
     name = attack.name,
     power = attack.power,
-    status_effect = attack.status_effect,
+    status_effects = attack.status_effects,
+    duration = attack.duration,
     animation = attack.animation,
     target = nil,
     animation_loops = {},
-    post_animation = attack.post_animation,
+    effects = attack.effects,
     trigger = function(self, target)
+      -- if the attack has duration, subtract from it
+      if (self.duration != nil and self.duration > 0) self.duration -= 1
       -- if the attack has an animation, add it
       if (self.animation) add(self.animation_loops, cocreate(self.animation))
       if (target.is_player) then
         -- if the target is the player, add the screen shake
-        add(self.animation_loops, cocreate(screen_shake_animation))
+        add(self.animation_loops, cocreate(animations.screen_shake))
       end
       foreach(self.animation_loops, function(animation_loop)
         add(animations, animation_loop)
@@ -155,8 +155,13 @@ function make_attack(candy, attack)
         end
       end)
 
-      if (#self.animation_loops == 0 and self.target and self.post_animation) then
-        self:post_animation()
+      -- if all animations have run and there is a target, clean up
+      if (#self.animation_loops == 0 and self.target) then
+        if (self.effects != nil and #self.effects > 0) then
+          foreach(self.effects, function(effect)
+            effect(self)
+          end)
+        end
         -- no longer attacking so unset the target
         self.target = nil
       end

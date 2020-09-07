@@ -25,6 +25,7 @@ end
 
 animations = {}
 
+#include animations.p8
 #include attacks.p8
 #include candies.p8
 
@@ -254,6 +255,7 @@ function make_candy(candy, x, y, color, is_player)
     attacks = candy.attacks,
     attack_objects = {},
     state = nil, -- maybe to be used for status effects?
+    status_effects = {},
     update = function(self)
       if ((player.hp == 0 or enemy.hp == 0) and #animations == 0) then
         return
@@ -262,6 +264,7 @@ function make_candy(candy, x, y, color, is_player)
       -- when you attack, damage the enemy
       if (self.is_player and current_scene.is_player_turn and #animations == 0 and btnp(4)) then
         self:selected_attack(enemy)
+        self:apply_status_effects()
         current_scene:switch_turns()
         menu:toggle(false)
       end
@@ -269,6 +272,7 @@ function make_candy(candy, x, y, color, is_player)
       -- if it's not the player's turn, it's not the player, and no animations are happening
       if (not self.is_player and not current_scene.is_player_turn and #animations == 0) then
         self:random_attack(player)
+        self:apply_status_effects()
         current_scene:switch_turns()
       end
     end,
@@ -284,6 +288,21 @@ function make_candy(candy, x, y, color, is_player)
       selected_attack:trigger(victim)
       dialog:trigger(self.name .. " used " .. selected_attack.name)
       -- dialog:trigger("this is some really long text that will likely go to the next line you stupid punk")
+    end,
+    apply_status_effects = function(self)
+      if (#self.status_effects > 0) then
+        foreach (self.status_effects, function(status_effect)
+          -- @todo add status effects to current scene here if not already added
+          -- if the status effect has no more duration, clean it up
+          if (status_effect.duration == 0) then
+            current_scene:remove(status_effect)
+            -- dereference to avoid a memory leak
+            status_effect = nil
+          else
+            status_effect:trigger(self)
+          end
+        end)
+      end
     end,
     draw = function(self)
       -- draw character
@@ -484,7 +503,7 @@ function make_end_screen(player)
         if self.did_win then
           change_scene(title_screen)
         else
-          change_scene(make_battle_scene(razor_apple, battle_enemies[current_battle]))
+          change_scene(make_battle_scene(candies.razor_apple, battle_enemies[current_battle]))
         end
       end
     end,
@@ -609,7 +628,7 @@ story_screen = make_scene({
   end,
   update = function(self)
     if (#animations == 0) then
-      change_scene(make_battle_scene(razor_apple, battle_enemies[current_battle]))
+      change_scene(make_battle_scene(candies.razor_apple, battle_enemies[current_battle]))
     end
   end,
   draw = function(self)
@@ -660,7 +679,7 @@ map_screen = make_scene({
     -- when finished walking and finished with delay, change scene
     if (self.is_finished_walking) then
       current_battle += 1
-      change_scene(make_battle_scene(razor_apple, battle_enemies[current_battle]))
+      change_scene(make_battle_scene(candies.razor_apple, battle_enemies[current_battle]))
       return
     end
 
@@ -728,7 +747,7 @@ map_screen = make_scene({
 
 current_scene = title_screen
 -- current_scene = story_screen
--- current_scene = make_battle_scene(razor_apple, battle_enemies[current_battle])
+-- current_scene = make_battle_scene(candies.razor_apple, battle_enemies[current_battle])
 -- current_scene = map_screen
 
 -- player = {hp = 0}
@@ -736,10 +755,10 @@ current_scene = title_screen
 
 current_battle = 1
 battle_enemies = {
-  boom_pops,
-  razor_apple,
-  razor_apple,
-  razor_apple
+  candies.boom_pops,
+  candies.razor_apple,
+  candies.razor_apple,
+  candies.razor_apple
 }
 
 function _init()
