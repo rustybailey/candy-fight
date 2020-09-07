@@ -6,11 +6,11 @@ candies = {
     hp = 100,
     attack_power = 100,
     defense_rating = 100,
-    attacks = {
-      attacks.punch,
-      attacks.kick,
-      attacks.rot_teeth,
-      attacks.caramelize
+    abilities = {
+      abilities.punch,
+      abilities.kick,
+      abilities.rot_teeth,
+      abilities.caramelize
     }
   },
   boom_pops = {
@@ -19,11 +19,11 @@ candies = {
     hp = 100,
     attack_power = 100,
     defense_rating = 100,
-    attacks = {
-      attacks.pop,
-      attacks.bang,
-      attacks.boom,
-      attacks.settle_down
+    abilities = {
+      abilities.pop,
+      abilities.bang,
+      abilities.boom,
+      abilities.settle_down
     }
   }
 }

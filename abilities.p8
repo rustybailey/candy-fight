@@ -1,22 +1,22 @@
 effects = {
-  damage = function(attack)
-    bonus = attack.candy.attack_power - attack.target.defense_rating
+  damage = function(ability)
+    bonus = ability.candy.attack_power - ability.target.defense_rating
     bonus_multiplier = 1 + (bonus / 100)
-    -- don't allow an attack to give back health
+    -- don't allow an attack ability to give back health
     bonus_multiplier = max(bonus_multiplier, 0)
 
     -- always subtract whole numbers from the health
-    attack.target.hp -= flr(attack.power * bonus_multiplier)
+    ability.target.hp -= flr(ability.power * bonus_multiplier)
     -- don't let target hp fall below zero
-    if (attack.target.hp < 0) attack.target.hp = 0
+    if (ability.target.hp < 0) ability.target.hp = 0
   end,
-  apply_statuses = function(attack)
-    if (attack.status_effects != nil and #attack.status_effects > 0) then
-      foreach(attack.status_effects, function(status_effect)
-        status_effect_attack = make_attack(attack.candy, status_effect)
-        add(attack.target.status_effects, status_effect_attack)
+  apply_statuses = function(ability)
+    if (ability.status_effects != nil and #ability.status_effects > 0) then
+      foreach(ability.status_effects, function(status_effect)
+        status_effect_ability = make_ability(ability.candy, status_effect)
+        add(ability.target.status_effects, status_effect_ability)
         -- @todo this doesn't feel great here
-        current_scene:add(status_effect_attack)
+        current_scene:add(status_effect_ability)
       end)
     end
   end
@@ -34,7 +34,7 @@ status_effects = {
   }
 }
 
-attacks = {
+abilities = {
   punch = {
     name = "punch",
     power = 10,
@@ -118,21 +118,21 @@ attacks = {
   }
 }
 
-function make_attack(candy, attack)
+function make_ability(candy, ability)
   return {
     candy = candy,
-    name = attack.name,
-    power = attack.power,
-    status_effects = attack.status_effects,
-    duration = attack.duration,
-    animation = attack.animation,
+    name = ability.name,
+    power = ability.power,
+    status_effects = ability.status_effects,
+    duration = ability.duration,
+    animation = ability.animation,
     target = nil,
     animation_loops = {},
-    effects = attack.effects,
+    effects = ability.effects,
     trigger = function(self, target)
-      -- if the attack has duration, subtract from it
+      -- if the ability has duration, subtract from it
       if (self.duration != nil and self.duration > 0) self.duration -= 1
-      -- if the attack has an animation, add it
+      -- if the ability has an animation, add it
       if (self.animation) add(self.animation_loops, cocreate(self.animation))
       if (target.is_player) then
         -- if the target is the player, add the screen shake
@@ -162,7 +162,7 @@ function make_attack(candy, attack)
             effect(self)
           end)
         end
-        -- no longer attacking so unset the target
+        -- no longer using ability so unset the target
         self.target = nil
       end
     end

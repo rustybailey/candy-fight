@@ -26,7 +26,7 @@ end
 animations = {}
 
 #include animations.p8
-#include attacks.p8
+#include abilities.p8
 #include candies.p8
 
 dialog = {
@@ -183,7 +183,7 @@ dialog = {
 menu = {
   x = 76,
   y = 95,
-  max_attacks = 4,
+  max_abilities = 4,
   toggle = function(self, should_show)
     self.is_visible = should_show
   end,
@@ -198,7 +198,7 @@ menu = {
     if btnp(2) then
       self.current_selection -= 1
       if (self.current_selection < 1) then
-        self.current_selection = self.max_attacks
+        self.current_selection = self.max_abilities
       end
       sfx(0)
     end
@@ -206,7 +206,7 @@ menu = {
     -- down
     if btnp(3) then
       self.current_selection += 1
-      if (self.current_selection > self.max_attacks) then
+      if (self.current_selection > self.max_abilities) then
         self.current_selection = 1
       end
       sfx(0)
@@ -215,12 +215,12 @@ menu = {
   draw = function(self)
     if not self.is_visible then return end
 
-    -- display attack names
-    local attack_display_y = self.y
-    for k, attack in pairs(player.attack_objects) do
-      local attack_color = k == self.current_selection and 12 or 7
-      print(attack.name, self.x, attack_display_y, attack_color)
-      attack_display_y += 7
+    -- display ability names
+    local ability_display_y = self.y
+    for k, ability in pairs(player.ability_objects) do
+      local ability_color = k == self.current_selection and 12 or 7
+      print(ability.name, self.x, ability_display_y, ability_color)
+      ability_display_y += 7
     end
 
     -- draw cursor
@@ -252,18 +252,17 @@ function make_candy(candy, x, y, color, is_player)
     hp = candy.hp,
     attack_power = candy.attack_power,
     defense_rating = candy.defense_rating,
-    attacks = candy.attacks,
-    attack_objects = {},
-    state = nil, -- maybe to be used for status effects?
+    abilities = candy.abilities,
+    ability_objects = {},
     status_effects = {},
     update = function(self)
       if ((player.hp == 0 or enemy.hp == 0) and #animations == 0) then
         return
       end
 
-      -- when you attack, damage the enemy
+      -- when you use an ability, do something
       if (self.is_player and current_scene.is_player_turn and #animations == 0 and btnp(4)) then
-        self:selected_attack(enemy)
+        self:selected_ability(enemy)
         self:apply_status_effects()
         current_scene:switch_turns()
         menu:toggle(false)
@@ -271,22 +270,22 @@ function make_candy(candy, x, y, color, is_player)
 
       -- if it's not the player's turn, it's not the player, and no animations are happening
       if (not self.is_player and not current_scene.is_player_turn and #animations == 0) then
-        self:random_attack(player)
+        self:random_ability(player)
         self:apply_status_effects()
         current_scene:switch_turns()
       end
     end,
-    random_attack = function(self, victim)
-      local random_attack = self.attack_objects[flr(rnd(4)) + 1]
-      self:attack(victim, random_attack)
+    random_ability = function(self, victim)
+      local random_ability = self.ability_objects[flr(rnd(4)) + 1]
+      self:use_ability(victim, random_ability)
     end,
-    selected_attack = function(self, victim)
-      local selected_attack = self.attack_objects[menu.current_selection]
-      self:attack(victim, selected_attack)
+    selected_ability = function(self, victim)
+      local selected_ability = self.ability_objects[menu.current_selection]
+      self:use_ability(victim, selected_ability)
     end,
-    attack = function(self, victim, selected_attack)
-      selected_attack:trigger(victim)
-      dialog:trigger(self.name .. " used " .. selected_attack.name)
+    use_ability = function(self, victim, selected_ability)
+      selected_ability:trigger(victim)
+      dialog:trigger(self.name .. " used " .. selected_ability.name)
       -- dialog:trigger("this is some really long text that will likely go to the next line you stupid punk")
     end,
     apply_status_effects = function(self)
@@ -365,8 +364,8 @@ function make_candy(candy, x, y, color, is_player)
       print(hp_text, hp_x, self.y + y_offset + 12, 6)
     end,
     init = function(self)
-      foreach(self.attacks, function(attack)
-        add(self.attack_objects, make_attack(self, attack))
+      foreach(self.abilities, function(ability)
+        add(self.ability_objects, make_ability(self, ability))
       end)
     end
   }
@@ -448,12 +447,12 @@ function make_battle_scene(player_candy, enemy_candy)
       self:add(menu)
       self:add(dialog)
 
-      foreach(player.attack_objects, function(attack)
-        self:add(attack)
+      foreach(player.ability_objects, function(ability)
+        self:add(ability)
       end)
 
-      foreach(enemy.attack_objects, function(attack)
-        self:add(attack)
+      foreach(enemy.ability_objects, function(ability)
+        self:add(ability)
       end)
     end,
     update = function(self)
