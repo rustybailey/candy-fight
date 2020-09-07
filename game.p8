@@ -32,7 +32,7 @@ dialog = {
   x = 8,
   y = 96,
   color = 7,
-  max_chars_per_line = 24,
+  max_chars_per_line = 27,
   max_lines = 4,
   init = function(self)
     self.blinking_counter = 0
@@ -153,14 +153,20 @@ dialog = {
       print(self.current_message, self.x, self.y, self.color)
     end
 
-    -- draw blinking cursor at the end of the line
+    -- draw blinking cursor at the bottom right
     if (not self.autoplay and self.pause_dialog) then
-      local sprite_height = 4
-      local cursor_x = self.x + ((#self.messages_by_line[self.current_line_in_table] + 1) * 4) - 2
-      local cursor_y = self.y + ((self.current_line_count - 1) * 6) - 3
-
       if self.blinking_counter > 15 then
-        spr(32, cursor_x, cursor_y)
+        if (self.current_line_in_table == #self.messages_by_line) then
+          rectfill(
+            screen_width - 11,
+            screen_width - 10,
+            screen_width - 11 + 3,
+            screen_width - 10 + 3,
+            7
+          )
+        else
+          spr(32, screen_width - 12, screen_width - 9)
+        end
       end
     end
 
