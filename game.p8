@@ -475,8 +475,6 @@ function make_end_screen(player)
     end,
     update = function(self)
       self.counter += 1
-      -- counting the full time of the fanfare
-      if (self.counter % 192 == 0) self.counter = 0
 
       self.text_color_index += 1
       if (self.text_color_index % #colors_light_to_dark == 0) self.text_color_index = 1
@@ -524,6 +522,8 @@ end
 
 title_screen = make_scene({
   init = function(self)
+    current_battle = 1
+
     self.logo_x = 30
     self.logo_y = 30
     self.counter = 0
