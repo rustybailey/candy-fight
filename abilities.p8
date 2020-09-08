@@ -104,13 +104,11 @@ abilities = {
   pop = {
     name = "pop",
     power = 5,
-    status_effects = {
-      status_effects.reduce_defense_rating
-    },
+    status_effects = nil,
     animation = animations.basic_attack,
     effects = {
       effects.damage,
-      effects.apply_statuses
+      effects.reduce_defense_rating
     }
   },
   acid_spit = {
@@ -136,11 +134,12 @@ abilities = {
   settle_down = {
     name = "settle down",
     power = 10,
-    status_effects = {
-      status_effects.reduce_attack_power
-    },
+    status_effects = nil,
     animation = animations.basic_attack,
-    effects = nil
+    effects = {
+      effects.attack,
+      effects.reduce_attack_power
+    }
   }
 }
 
