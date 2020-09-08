@@ -174,6 +174,16 @@ abilities = {
     effects = {
       effects.heal
     }
+  },
+  swack_swack = {
+    name = "swack swack",
+    power = 10,
+    status_effects = nil,
+    animation = animations.basic_attack,
+    effects = {
+      effects.reduce_attack_power,
+      effects.reduce_defense_rating
+    }
   }
 }
 
