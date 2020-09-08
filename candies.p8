@@ -6,10 +6,10 @@ candies = {
     hp = 100,
     max_hp = 100,
     attack_power = 100,
-    defense_rating = 100,
+    defense_rating = 150,
     abilities = {
-      abilities.punch,
-      abilities.kick,
+      abilities.throw_razor,
+      abilities.bash,
       abilities.rot_teeth,
       abilities.caramelize
     }
@@ -23,7 +23,7 @@ candies = {
     defense_rating = 100,
     abilities = {
       abilities.pop,
-      abilities.bang,
+      abilities.acid_spit,
       abilities.boom,
       abilities.settle_down
     }

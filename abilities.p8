@@ -21,6 +21,16 @@ effects = {
       -- dialog:trigger(ability.candy.name.." used "..ability.name.." and "..ability.opponent.name.." was affected by "..status_effect.name, false)
     end)
   end,
+  reduce_attack_power = function(ability)
+    ability.opponent.attack_power *= (1 - (ability.power / 100))
+    -- don't let attack power fall below 0
+    ability.opponent.attack_power = max(ability.opponent.attack_power, 0)
+  end,
+  reduce_defense_rating = function(ability)
+    ability.opponent.defense_rating *= (1 - (ability.power / 100))
+    -- don't let defense rating fall below 0
+    ability.opponent.defense_rating = max(ability.opponent.defense_rating, 0)
+  end,
   heal = function(ability)
     ability.candy.hp += ability.power
 
@@ -30,9 +40,18 @@ effects = {
 }
 
 status_effects = {
+  bleed = {
+    name = "bleed",
+    power = 10,
+    duration = 2,
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage
+    }
+  },
   rot = {
     name = "rot",
-    power = 10,
+    power = 4,
     duration = 5,
     animation = animations.basic_attack,
     effects = {
@@ -42,37 +61,31 @@ status_effects = {
 }
 
 abilities = {
-  punch = {
-    name = "punch",
-    power = 10,
-    status_effects = {},
+  throw_razor = {
+    name = "throw razor",
+    power = nil,
+    status_effects = {
+      status_effects.bleed
+    },
     animation = animations.basic_attack,
     effects = {
-      effects.damage
+      effects.apply_statuses
     }
   },
-  kick = {
-    name = "kick",
-    power = 20,
+  bash = {
+    name = "bash",
+    power = 14,
     status_effects = {},
-    -- @toto heal animation
     animation = nil,
     effects = {
-      effects.heal
+      effects.damage
     }
   },
   rot_teeth = {
     name = "rot teeth",
     power = nil,
     status_effects = {
-      -- status effect rot with modified values
-      merge_tables(
-        status_effects.rot,
-        {
-          power = 5,
-          duration = 3
-        }
-      )
+      status_effects.rot
     },
     animation = animations.basic_attack,
     effects = {
@@ -81,34 +94,39 @@ abilities = {
   },
   caramelize = {
     name = "caramelize",
-    power = 0,
+    power = 10,
     status_effects = {},
     animation = animations.basic_attack,
     effects = {
-      effects.damage
+      effects.reduce_attack_power
     }
   },
   pop = {
     name = "pop",
-    power = 1,
-    status_effects = {},
+    power = 5,
+    status_effects = {
+      status_effects.reduce_defense_rating
+    },
     animation = animations.basic_attack,
     effects = {
-      effects.damage
+      effects.damage,
+      effects.apply_statuses
     }
   },
-  bang = {
-    name = "bang",
-    power = 5,
-    status_effects = {},
+  acid_spit = {
+    name = "acid spit",
+    power = nil,
+    status_effects = {
+      status_effects.bleed
+    },
     animation = animations.basic_attack,
     effects = {
-      effects.damage
+      effects.apply_statuses
     }
   },
   boom = {
     name = "boom",
-    power = 10,
+    power = 20,
     status_effects = {},
     animation = animations.basic_attack,
     effects = {
@@ -117,12 +135,12 @@ abilities = {
   },
   settle_down = {
     name = "settle down",
-    power = 20,
-    status_effects = {},
+    power = 10,
+    status_effects = {
+      status_effects.reduce_attack_power
+    },
     animation = animations.basic_attack,
-    effects = {
-      effects.damage
-    }
+    effects = nil
   }
 }
 
