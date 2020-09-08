@@ -10,7 +10,7 @@ effects = {
     ability.opponent.hp -= damage
     -- don't let opponent hp fall below zero
     if (ability.opponent.hp < 0) ability.opponent.hp = 0
-    -- dialog:trigger(ability.opponent.name.." was hit for "..damage.." damage", false)
+    dialog:queue(ability.opponent.name.." was hit for "..damage.." damage")
   end,
   apply_statuses = function(ability)
     foreach(ability.status_effects, function(status_effect)
@@ -18,7 +18,8 @@ effects = {
       add(ability.opponent.status_effects, status_effect_ability)
       -- @todo this doesn't feel great here
       current_scene:add(status_effect_ability)
-      -- dialog:trigger(ability.candy.name.." used "..ability.name.." and "..ability.opponent.name.." was affected by "..status_effect.name, false)
+      dialog:queue(ability.candy.name.." used "..ability.name)
+      dialog:queue(ability.opponent.name.." was affected by "..status_effect.name)
     end)
   end,
   reduce_attack_power = function(ability)
