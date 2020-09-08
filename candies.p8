@@ -27,5 +27,41 @@ candies = {
       abilities.boom,
       abilities.settle_down
     }
+  },
+  criminal_crunch = {
+    name = "criminal crunch",
+    sprite = nil,
+    hp = 100,
+    max_hp = 100,
+    attack_power = 100,
+    defense_rating = 100,
+    abilities = {
+      abilities.crunch,
+      abilities.rat_a_tat,
+      abilities.cannibalize_candy,
+      abilities.swack_swack
+    }
+  },
+  jaw_crusher = {
+    name = "jaw crusher",
+    sprite = nil,
+    hp = 100,
+    max_hp = 100,
+    attack_power = 100,
+    defense_rating = 100,
+    abilities = {
+
+    }
+  },
+  pb_killer = {
+    name = "pb killer",
+    sprite = nil,
+    hp = 100,
+    max_hp = 100,
+    attack_power = 100,
+    defense_rating = 100,
+    abilities = {
+
+    }
   }
 }

@@ -9,7 +9,7 @@ effects = {
     damage = flr(ability.power * bonus_multiplier)
     ability.opponent.hp -= damage
     -- don't let opponent hp fall below zero
-    if (ability.opponent.hp < 0) ability.target.hp = 0
+    if (ability.opponent.hp < 0) ability.opponent.hp = 0
     -- dialog:trigger(ability.opponent.name.." was hit for "..damage.." damage", false)
   end,
   apply_statuses = function(ability)
@@ -61,6 +61,7 @@ status_effects = {
 }
 
 abilities = {
+  -- razor apple
   throw_razor = {
     name = "throw razor",
     power = nil,
@@ -101,6 +102,7 @@ abilities = {
       effects.reduce_attack_power
     }
   },
+  -- boom pops
   pop = {
     name = "pop",
     power = 5,
@@ -139,6 +141,37 @@ abilities = {
     effects = {
       effects.attack,
       effects.reduce_attack_power
+    }
+  },
+  -- criminal crunch
+  crunch = {
+    name = "crunch",
+    power = 20,
+    status_effects = nil,
+    animation = animations.basic_attack,
+    effects = {
+      effects.attack
+    }
+  },
+  rat_a_tat = {
+    name = "rat-a-tat",
+    power = nil,
+    status_effects = {
+      status_effects.bleed
+    },
+    animation = animations.basic_attack,
+    effects = {
+      effects.apply_statuses
+    }
+  },
+  cannibalize_candy = {
+    name = "cannibalize candy",
+    power = 10,
+    status_effects = nil,
+    -- @todo add heal animation
+    animation = nil,
+    effects = {
+      effects.heal
     }
   }
 }
