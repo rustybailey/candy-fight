@@ -23,6 +23,16 @@ function merge_tables(a, b)
   return a
 end
 
+-- del by index - doesn't keep order!!
+-- using this so we can shift the first element from the array
+function idelr(t,i)
+  local n=#t
+  if (i>0 and i<=n) then
+    t[i]=t[n]
+    t[n]=nil
+  end
+end
+
 animations = {}
 
 #include animations.p8
@@ -35,12 +45,24 @@ dialog = {
   color = 7,
   max_chars_per_line = 27,
   max_lines = 4,
+  dialog_queue = {},
   init = function(self)
     self.blinking_counter = 0
   end,
+  queue = function(self, message, autoplay)
+    autoplay = type(autoplay) == "nil" and true or autoplay
+    add(self.dialog_queue, {
+      message = message,
+      autoplay = autoplay
+    })
+
+    if (#self.dialog_queue == 1) then
+      self:trigger(self.dialog_queue[1].message, self.dialog_queue[1].autoplay)
+    end
+  end,
   trigger = function(self, message, autoplay)
     -- default autoplay to true
-    self.autoplay = type(autoplay) == "nil" and true or autoplay
+    self.autoplay = autoplay
     self.current_message = ''
     self.messages_by_line = nil
     self.animation_loop = nil
@@ -125,9 +147,6 @@ dialog = {
     end
   end,
   update = function(self)
-    -- @todo when you press a button before the animation finishes
-    -- it should automatically complete the message
-
     if (self.animation_loop and costatus(self.animation_loop) != 'dead') then
       if (not self.pause_dialog) then
         coresume(self.animation_loop, self)
@@ -141,6 +160,15 @@ dialog = {
     elseif (self.animation_loop and self.current_message) then
       if (self.autoplay) self.current_message = ''
       del(animations, self.animation_loop)
+      self.animation_loop = nil
+    end
+
+    if (not self.animation_loop and #self.dialog_queue > 0) then
+      idelr(self.dialog_queue, 1)
+      if (#self.dialog_queue > 0) then
+        self:trigger(self.dialog_queue[1].message, self.dialog_queue[1].autoplay)
+        coresume(self.animation_loop, self)
+      end
     end
 
     if (not self.autoplay) then
@@ -285,13 +313,12 @@ function make_candy(candy, x, y, color, is_player)
       self:use_ability(opponent, selected_ability)
     end,
     use_ability = function(self, opponent, selected_ability)
-      dialog:trigger(self.name .. " used " .. selected_ability.name, false)
+      dialog:queue(self.name .. " used " .. selected_ability.name)
       selected_ability:trigger(opponent)
       printh(opponent.name)
       printh("-------------")
       printh("attack_power: "..opponent.attack_power)
       printh("defense_rating: "..opponent.defense_rating)
-      -- dialog:trigger("this is some really long text that will likely go to the next line you stupid punk")
     end,
     apply_status_effects = function(self)
       if (#self.status_effects > 0) then
@@ -367,6 +394,11 @@ function make_candy(candy, x, y, color, is_player)
 
       -- display hp numbers
       print(hp_text, hp_x, self.y + y_offset + 12, 6)
+
+
+      -- for debugging why turns weren't proceeding
+      -- center_print("is player turn: " .. (current_scene.is_player_turn and "true" or "false"), 30, 7)
+      -- center_print("number animations: " .. #animations, 40, 7)
     end,
     init = function(self)
       foreach(self.abilities, function(ability)
@@ -627,8 +659,7 @@ story_screen = make_scene({
     self.t = 0
     self:add(dialog)
     local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages in battle with your friend's candy."
-    dialog:trigger(message, false)
-    -- dialog:trigger('test')
+    dialog:queue(message, false)
   end,
   update = function(self)
     if (#animations == 0) then
