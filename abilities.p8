@@ -262,7 +262,7 @@ abilities = {
     name = "draw blood",
     power = 10,
     status_effects = nil,
-    animation = animations.basic_attack,
+    animation = animations.heal,
     effects = {
       effects.heal
     }
