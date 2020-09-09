@@ -482,7 +482,8 @@ function make_battle_scene(player_candy, enemy_candy)
       self.listen_for_turn_switch = true
     end,
     end_battle = function(self)
-      if (enemy.hp == 0 and current_battle < #battle_enemies) then
+      -- if (enemy.hp == 0 and current_battle < #battle_enemies) then
+      if (enemy.hp == 0 and current_battle < #enemies) then
         change_scene(map_screen)
       else
         change_scene(make_end_screen(player))
@@ -553,6 +554,7 @@ function make_end_screen(player)
         if self.did_win then
           change_scene(title_screen)
         else
+          -- @todo use the current decided player candy
           change_scene(make_battle_scene(player_starting_candy, battle_enemies[current_battle]))
         end
       end
@@ -611,6 +613,21 @@ title_screen = make_scene({
         width = flr(rnd(30) + 20)
       })
       cloud_y += 2
+    end
+
+    -- @todo choose player candy and then randomize the rest
+    player_index = flr(rnd(#candies)) + 1
+    player = candies[player_index]
+    enemies = {}
+
+    printh("#animations: "..#animations)
+    printh("#candies: "..#candies)
+    printh("player_index: "..player_index)
+
+    for k, enemy in pairs(candies) do
+      -- if k is not the player index, add the candy to the
+      -- set of enemies
+      if (k != player_index) add(enemies, enemy)
     end
   end,
   update = function(self)
@@ -814,6 +831,8 @@ battle_enemies = {
   candies.boom_pops,
   candies.jaw_crusher,
 }
+
+enemies = {}
 
 function _init()
   current_scene:init()
