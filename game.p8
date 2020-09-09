@@ -33,6 +33,14 @@ function idelr(t,i)
   end
 end
 
+function shuffle_table(table)
+  -- do a fisher-yates shuffle
+  for i = #table, 1, -1 do
+    local j = flr(rnd(i)) + 1
+    table[i], table[j] = table[j], table[i]
+  end
+end
+
 animations = {}
 
 #include animations.p8
@@ -323,10 +331,6 @@ function make_candy(candy, x, y, color, is_player)
     use_ability = function(self, opponent, selected_ability)
       dialog:queue(self.name .. " used " .. selected_ability.name)
       selected_ability:trigger(opponent)
-      printh(opponent.name)
-      printh("-------------")
-      printh("attack_power: "..opponent.attack_power)
-      printh("defense_rating: "..opponent.defense_rating)
     end,
     wait_to_apply_status_effects = false,
     apply_status_effects = function(self)
@@ -554,8 +558,7 @@ function make_end_screen(player)
         if self.did_win then
           change_scene(title_screen)
         else
-          -- @todo use the current decided player candy
-          change_scene(make_battle_scene(player_starting_candy, battle_enemies[current_battle]))
+          change_scene(make_battle_scene(player_candy, battle_enemies[current_battle]))
         end
       end
     end,
@@ -616,19 +619,15 @@ title_screen = make_scene({
       cloud_y += 2
     end
 
-    -- @todo choose player candy and then randomize the rest
-    player_index = flr(rnd(#candies)) + 1
-    player = candies[player_index]
-    enemies = {}
+    -- randomize the player and enemies
+    shuffle_table(candies)
 
-    printh("#animations: "..#animations)
-    printh("#candies: "..#candies)
-    printh("player_index: "..player_index)
+    player_candy = candies[1]
+    battle_enemies = {}
 
-    for k, enemy in pairs(candies) do
-      -- if k is not the player index, add the candy to the
-      -- set of enemies
-      if (k != player_index) add(enemies, enemy)
+    for i = 2, #candies do
+      printh(candies[i].name)
+      add(battle_enemies, candies[i])
     end
   end,
   update = function(self)
@@ -699,7 +698,7 @@ story_screen = make_scene({
   end,
   update = function(self)
     if (#animations == 0) then
-      change_scene(make_battle_scene(player_starting_candy, battle_enemies[current_battle]))
+      change_scene(make_battle_scene(player_candy, battle_enemies[current_battle]))
     end
   end,
   draw = function(self)
@@ -750,7 +749,7 @@ map_screen = make_scene({
     -- when finished walking and finished with delay, change scene
     if (self.is_finished_walking) then
       current_battle += 1
-      change_scene(make_battle_scene(player_starting_candy, battle_enemies[current_battle]))
+      change_scene(make_battle_scene(player_candy, battle_enemies[current_battle]))
       return
     end
 
@@ -817,23 +816,9 @@ map_screen = make_scene({
 })
 
 current_scene = title_screen
--- current_scene = story_screen
--- current_scene = make_battle_scene(player_starting_candy, battle_enemies[current_battle])
--- current_scene = map_screen
-
--- player = {hp = 0}
--- current_scene = make_end_screen(player)
-
 current_battle = 1
-player_starting_candy = candies.criminal_crunch
-battle_enemies = {
-  candies.pb_killer,
-  candies.razor_apple,
-  candies.boom_pops,
-  candies.jaw_crusher,
-}
-
-enemies = {}
+player_candy = nil
+battle_enemies = {}
 
 function _init()
   current_scene:init()

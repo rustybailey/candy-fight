@@ -1,6 +1,6 @@
 -- unique candies
 candies = {
-  razor_apple = {
+  {
     name = "razor apple",
     sprite = 20,
     hp = 100,
@@ -14,7 +14,7 @@ candies = {
       abilities.caramelize
     }
   },
-  boom_pops = {
+  {
     name = "boom pops",
     sprite = 28,
     hp = 100,
@@ -28,7 +28,7 @@ candies = {
       abilities.settle_down
     }
   },
-  criminal_crunch = {
+  {
     name = "criminal crunch",
     sprite = 24,
     hp = 100,
@@ -42,7 +42,7 @@ candies = {
       abilities.swack_swack
     }
   },
-  jaw_crusher = {
+  {
     name = "jaw crusher",
     sprite = 88,
     hp = 100,
@@ -56,7 +56,7 @@ candies = {
       abilities.uppercut
     }
   },
-  pb_killer = {
+  {
     name = "pb killer",
     sprite = 92,
     hp = 100,
@@ -64,7 +64,7 @@ candies = {
     attack_power = 100,
     defense_rating = 100,
     abilities = {
-      abilities.stab_stab_stab,
+      abilities.stab_stab,
       abilities.draw_blood,
       abilities.slit_throat,
       abilities.disembowel

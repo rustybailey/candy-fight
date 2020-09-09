@@ -247,8 +247,8 @@ abilities = {
     }
   },
   -- pb killer
-  stab_stab_stab = {
-    name = "stab stab stab",
+  stab_stab = {
+    name = "stab stab",
     power = 5,
     status_effects = {
       status_effects.bleed
