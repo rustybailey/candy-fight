@@ -58,13 +58,16 @@ candies = {
   },
   pb_killer = {
     name = "pb killer",
-    sprite = nil,
+    sprite = 92,
     hp = 100,
     max_hp = 100,
     attack_power = 100,
     defense_rating = 100,
     abilities = {
-
+      abilities.bash,
+      abilities.bash,
+      abilities.bash,
+      abilities.bash
     }
   }
 }
