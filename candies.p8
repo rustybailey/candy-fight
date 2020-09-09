@@ -44,13 +44,16 @@ candies = {
   },
   jaw_crusher = {
     name = "jaw crusher",
-    sprite = nil,
+    sprite = 88,
     hp = 100,
     max_hp = 100,
     attack_power = 100,
     defense_rating = 100,
     abilities = {
-
+      abilities.bash,
+      abilities.bash,
+      abilities.bash,
+      abilities.bash
     }
   },
   pb_killer = {
