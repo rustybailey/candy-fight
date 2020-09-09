@@ -37,7 +37,7 @@ effects = {
 
     -- don't allow the heal to give more than max hp
     ability.candy.hp = min(ability.candy.hp, ability.candy.max_hp)
-    dialog:queue(ability.candy.." healed")
+    dialog:queue(ability.candy.name.." healed")
   end
 }
 
@@ -231,16 +231,42 @@ abilities = {
   },
   -- pb killer
   stab_stab_stab = {
-
+    name = "stab stab stab",
+    power = 5,
+    status_effects = {
+      status_effects.bleed
+    },
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage
+    }
   },
   draw_blood = {
-
+    name = "draw blood",
+    power = 10,
+    status_effects = nil,
+    animation = animations.basic_attack,
+    effects = {
+      effects.heal
+    }
   },
   slit_throat = {
-
+    name = "slit throat",
+    power = 20,
+    status_effects = nil,
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage
+    }
   },
   disembowel = {
-
+    name = "disembowel",
+    power = 20,
+    status_effects = nil,
+    animation = animations.basic_attack,
+    effects = {
+      effects.reduce_defense_rating
+    }
   }
 }
 

@@ -806,8 +806,8 @@ current_scene = title_screen
 
 current_battle = 1
 battle_enemies = {
-  candies.jaw_crusher,
   candies.pb_killer,
+  candies.jaw_crusher,
   candies.boom_pops,
   candies.criminal_crunch,
   -- candies.pb_killer
