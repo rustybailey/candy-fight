@@ -336,6 +336,8 @@ function make_candy(candy, x, y, color, is_player)
           -- @todo add status effects to current scene here if not already added
           -- if the status effect has no more duration, clean it up
           if (status_effect.duration == 0) then
+            dialog:queue("the effects of " .. status_effect.name .. " on " .. self.name .. " have worn off...")
+            del(self.status_effects, status_effect)
             current_scene:remove(status_effect)
             -- dereference to avoid a memory leak
             status_effect = nil
