@@ -123,8 +123,8 @@ dialog = {
     -- wait for input in update before proceeding
     for k, line in pairs(self.messages_by_line) do
       self.current_line_in_table = k
-      for i = 1, #line do
-        self.current_message ..= sub(line, i, i)
+      for i = 1, #line, 2 do
+        self.current_message ..= sub(line, i, i + 1)
 
         -- press btn 5 to skip to the end of the current passage
         -- otherwise, print 1 character per frame
