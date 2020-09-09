@@ -30,7 +30,7 @@ candies = {
   },
   criminal_crunch = {
     name = "criminal crunch",
-    sprite = nil,
+    sprite = 24,
     hp = 100,
     max_hp = 100,
     attack_power = 100,
