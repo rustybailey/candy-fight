@@ -368,7 +368,7 @@ function make_candy(candy, x, y, color, is_player)
 
       -- @todo animate the health bar and hp decreasing
       -- draw name, hp, and health bar
-      local hp_text = self.hp .. "/100"
+      local hp_text = self.hp .. "/" .. self.max_hp
       local name_x = 0
       local hp_x = 0
       local bar_x = 0
@@ -392,16 +392,16 @@ function make_candy(candy, x, y, color, is_player)
 
       -- display health bar
       local bar_length = 46
-      local health_length = flr(bar_length * (self.hp / 100))
+      local health_length = flr(bar_length * (self.hp / self.max_hp))
       local bar_y = ui_y + 8
       -- background bar
       line(bar_x, bar_y, (bar_x + bar_length), bar_y, 2)
       -- health percentage
       if (self.hp > 0) then
         local line_color = 0
-        if self.hp <= 100 and self.hp >= 75 then
+        if self.hp / self.max_hp >= 0.75 then
           line_color = 11
-        elseif self.hp <= 74 and self.hp >= 25 then
+        elseif self.hp / self.max_hp >= 0.5 then
           line_color = 10
         else
           line_color = 8
