@@ -5,7 +5,7 @@ candies = {
     sprite = 20,
     hp = 100,
     max_hp = 100,
-    attack_power = 100,
+    attack_power = 50,
     defense_rating = 150,
     abilities = {
       abilities.throw_razor,
@@ -19,8 +19,8 @@ candies = {
     sprite = 28,
     hp = 100,
     max_hp = 100,
-    attack_power = 100,
-    defense_rating = 100,
+    attack_power = 150,
+    defense_rating = 50,
     abilities = {
       abilities.pop,
       abilities.acid_spit,
@@ -33,8 +33,8 @@ candies = {
     sprite = 24,
     hp = 100,
     max_hp = 100,
-    attack_power = 100,
-    defense_rating = 100,
+    attack_power = 120,
+    defense_rating = 80,
     abilities = {
       abilities.crunch,
       abilities.rat_a_tat,
@@ -47,8 +47,8 @@ candies = {
     sprite = 88,
     hp = 100,
     max_hp = 100,
-    attack_power = 100,
-    defense_rating = 100,
+    attack_power = 700,
+    defense_rating = 130,
     abilities = {
       abilities.split_wig,
       abilities.break_jaw,
@@ -61,8 +61,8 @@ candies = {
     sprite = 92,
     hp = 100,
     max_hp = 100,
-    attack_power = 100,
-    defense_rating = 100,
+    attack_power = 130,
+    defense_rating = 70,
     abilities = {
       abilities.stab_stab,
       abilities.draw_blood,

@@ -50,6 +50,10 @@ effects = {
     ability.opponent.defense_rating = max(ability.opponent.defense_rating, 0)
     dialog:queue(ability.opponent.name.."'s defense was lowered")
   end,
+  increase_defense_rating = function(ability)
+    ability.candy.defense_rating *= (1 + (ability.power / 100))
+    dialog:queue(ability.candy.name.."'s defense was increased")
+  end,
   heal = function(ability)
     ability.candy.hp += ability.power
 
@@ -62,8 +66,8 @@ effects = {
 status_effects = {
   bleed = {
     name = "bleed",
-    power = 10,
-    duration = 2,
+    power = 7,
+    duration = 3,
     is_status_effect = true,
     animation = animations.bleed,
     effects = {
@@ -97,7 +101,7 @@ abilities = {
   },
   bash = {
     name = "bash",
-    power = 14,
+    power = 10,
     status_effects = {},
     animation = animations.basic_attack,
     effects = {
@@ -106,22 +110,20 @@ abilities = {
   },
   rot_teeth = {
     name = "rot teeth",
-    power = nil,
-    status_effects = {
-      status_effects.rot
-    },
+    power = 15,
+    status_effects = nil,
     animation = animations.basic_attack,
     effects = {
-      effects.apply_statuses
+      effects.reduce_defense_rating
     }
   },
   caramelize = {
     name = "caramelize",
-    power = 10,
+    power = 15,
     status_effects = {},
-    animation = animations.basic_attack,
+    animation = nil,
     effects = {
-      effects.reduce_attack_power
+      effects.increase_defense_rating
     }
   },
   -- boom pops
