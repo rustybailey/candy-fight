@@ -13,11 +13,29 @@ effects = {
   end,
   apply_statuses = function(ability)
     foreach(ability.status_effects, function(status_effect)
-      status_effect_ability = make_ability(ability.candy, status_effect)
-      add(ability.opponent.status_effects, status_effect_ability)
-      -- @todo this doesn't feel great here
-      current_scene:add(status_effect_ability)
-      dialog:queue(ability.opponent.name.." was inflicted with "..status_effect.name)
+      local status_name = status_effect.name
+      local status_already_exists = false
+      -- if the status effect already exists on the opponent,
+      -- increase the power and reset the duration
+      -- @todo -- add a max power for status effects?
+      foreach(ability.opponent.status_effects, function(o_status_effect)
+        if (o_status_effect.name == status_name) then
+          o_status_effect.power += status_effect.power
+          o_status_effect.duration = status_effect.duration
+          status_already_exists = true
+        end
+      end)
+
+      if (status_already_exists) then
+        dialog:queue("the effects of ".. status_effect.name .." on ".. ability.opponent.name .." worsened")
+      else
+        status_effect_ability = make_ability(ability.candy, status_effect)
+        add(ability.opponent.status_effects, status_effect_ability)
+        -- @todo this doesn't feel great here
+        current_scene:add(status_effect_ability)
+
+        dialog:queue(ability.opponent.name.." was inflicted with "..status_effect.name)
+      end
     end)
   end,
   reduce_attack_power = function(ability)
