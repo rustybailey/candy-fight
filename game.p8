@@ -486,8 +486,7 @@ function make_battle_scene(player_candy, enemy_candy)
       self.listen_for_turn_switch = true
     end,
     end_battle = function(self)
-      -- if (enemy.hp == 0 and current_battle < #battle_enemies) then
-      if (enemy.hp == 0 and current_battle < #enemies) then
+      if (enemy.hp == 0 and current_battle < #battle_enemies) then
         change_scene(map_screen)
       else
         change_scene(make_end_screen(player))
@@ -513,6 +512,11 @@ function make_battle_scene(player_candy, enemy_candy)
         printh(ability.name)
         self:add(ability)
       end)
+
+      -- enemy.hp *= (1 + current_battle / 100)
+      -- enemy.max_hp *= (1 + current_battle / 100)
+      -- enemy.attack_power *= (1 + current_battle / 100)
+      -- enemy.defense_rating *= (1 + current_battle / 100)
     end,
     update = function(self)
       if (self.listen_for_turn_switch) then
@@ -679,7 +683,7 @@ title_screen = make_scene({
     )
 
     if (self.counter > 15) then
-      center_print("press z to start  ", 84, 9)
+      center_print("press z to start", 84, 9)
     end
 
     print("a game by", 2, 100, 6)
