@@ -679,7 +679,7 @@ title_screen = make_scene({
     )
 
     if (self.counter > 15) then
-      center_print("press ❎ or 🅾️ to start  ", 84, 9)
+      center_print("press z to start  ", 84, 9)
     end
 
     print("a game by", 2, 100, 6)
