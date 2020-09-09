@@ -74,6 +74,16 @@ status_effects = {
       effects.damage
     }
   },
+  poison = {
+    name = "poison",
+    power = 5,
+    duration = 4,
+    is_status_effect = true,
+    animation = nil,
+    effects = {
+      effects.damage
+    }
+  },
   rot = {
     name = "rot",
     power = 4,
@@ -111,7 +121,7 @@ abilities = {
   rot_teeth = {
     name = "rot teeth",
     power = 15,
-    status_effects = nil,
+    status_effects = {},
     animation = animations.basic_attack,
     effects = {
       effects.reduce_defense_rating
@@ -129,19 +139,18 @@ abilities = {
   -- boom pops
   pop = {
     name = "pop",
-    power = 5,
-    status_effects = nil,
+    power = 7,
+    status_effects = {},
     animation = animations.basic_attack,
     effects = {
-      effects.damage,
-      effects.reduce_defense_rating
+      effects.damage
     }
   },
   acid_spit = {
     name = "acid spit",
     power = nil,
     status_effects = {
-      status_effects.bleed
+      status_effects.poison
     },
     animation = animations.basic_attack,
     effects = {
@@ -159,11 +168,10 @@ abilities = {
   },
   settle_down = {
     name = "settle down",
-    power = 10,
-    status_effects = nil,
+    power = 20,
+    status_effects = {},
     animation = animations.basic_attack,
     effects = {
-      effects.damage,
       effects.reduce_attack_power
     }
   },
@@ -191,7 +199,7 @@ abilities = {
   cannibalize = {
     name = "cannibalize",
     power = 10,
-    status_effects = nil,
+    status_effects = {},
     animation = animations.heal,
     effects = {
       effects.heal
@@ -200,7 +208,7 @@ abilities = {
   swack_swack = {
     name = "swack swack",
     power = 10,
-    status_effects = nil,
+    status_effects = {},
     animation = animations.basic_attack,
     effects = {
       effects.reduce_attack_power,
@@ -211,7 +219,7 @@ abilities = {
   split_wig = {
     name = "split wig",
     power = 10,
-    status_effects = nil,
+    status_effects = {},
     animation = animations.basic_attack,
     effects = {
       effects.damage,
@@ -221,7 +229,7 @@ abilities = {
   break_jaw = {
     name = "break jaw",
     power = 20,
-    status_effects = nil,
+    status_effects = {},
     animation = animations.basic_attack,
     effects = {
       effects.damage
@@ -230,11 +238,11 @@ abilities = {
   jab = {
     name = "jab",
     power = 10,
-    status_effects = nil,
+    status_effects = {},
     animation = animations.basic_attack,
     effects = {
       effects.damage,
-      effects.reduce_defense_rating
+      effects.increase_defense_rating
     }
   },
   uppercut = {
@@ -262,7 +270,7 @@ abilities = {
   },
   draw_blood = {
     name = "draw blood",
-    power = 10,
+    power = 6,
     status_effects = nil,
     animation = animations.heal,
     effects = {
