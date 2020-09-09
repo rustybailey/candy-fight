@@ -38,7 +38,7 @@ candies = {
     abilities = {
       abilities.crunch,
       abilities.rat_a_tat,
-      abilities.cannibalize_candy,
+      abilities.cannibalize,
       abilities.swack_swack
     }
   },

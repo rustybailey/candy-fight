@@ -551,7 +551,7 @@ function make_end_screen(player)
         if self.did_win then
           change_scene(title_screen)
         else
-          change_scene(make_battle_scene(candies.boom_pops, battle_enemies[current_battle]))
+          change_scene(make_battle_scene(candies.criminal_crunch, battle_enemies[current_battle]))
         end
       end
     end,
@@ -679,7 +679,7 @@ story_screen = make_scene({
   end,
   update = function(self)
     if (#animations == 0) then
-      change_scene(make_battle_scene(candies.boom_pops, battle_enemies[current_battle]))
+      change_scene(make_battle_scene(candies.criminal_crunch, battle_enemies[current_battle]))
     end
   end,
   draw = function(self)

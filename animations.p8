@@ -1,8 +1,9 @@
 animations = {
-  basic_attack = function(target)
-    x_offset = 0
-    y_offset = 0
-    animation_frame = 0
+  basic_attack = function(self)
+    local target = self.opponent
+    local x_offset = 0
+    local y_offset = 0
+    local animation_frame = 0
 
     for i = 0, 20 do
       if (i == 0) sfx(1)
@@ -41,7 +42,8 @@ animations = {
     -- reset the camera back
     camera(0, 0)
   end,
-  bleed = function(target)
+  bleed = function(self)
+    local target = self.opponent
     local starting_positions = {
       {target.x + 7, target.y + 10},
       {target.x - 3, target.y + 13},
@@ -55,6 +57,36 @@ animations = {
         y += 1
         yield()
       end
+    end
+  end,
+  heal = function(self)
+    local target = self.candy
+    local origin_x = target.x + 15
+    local origin_y = target.y + 15
+    local radius = 20
+    local circles = {
+      {angle = 1, color = 7},
+      {angle = .96, color = 6},
+      {angle = .92, color = 14},
+      {angle = .88, color = 10},
+    }
+    local rotations = 0
+    local max_rotations = 2
+
+    while (rotations < (max_rotations * #circles)) do
+      local rotated = false
+      for i = 1, #circles do
+        circles[i].angle -= 0.04
+        if (circles[i].angle < 0) then
+          circles[i].angle = 1
+          rotated = true
+        end
+        local x = origin_x + radius * cos(circles[i].angle)
+        local y = origin_y + radius * sin(circles[i].angle)
+        circfill(x, y, 2, circles[i].color)
+      end
+      if (rotated) then rotations += 1 end
+      yield()
     end
   end
 }

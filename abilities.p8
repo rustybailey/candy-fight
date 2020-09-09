@@ -168,12 +168,11 @@ abilities = {
       effects.apply_statuses
     }
   },
-  cannibalize_candy = {
-    name = "cannibalize candy",
+  cannibalize = {
+    name = "cannibalize",
     power = 10,
     status_effects = nil,
-    -- @todo add heal animation
-    animation = nil,
+    animation = animations.heal,
     effects = {
       effects.heal
     }
@@ -303,7 +302,7 @@ function make_ability(candy, ability)
     draw = function(self)
       foreach(self.animation_loops, function(animation_loop)
         if (animation_loop and costatus(animation_loop) != 'dead') then
-          coresume(animation_loop, self.opponent)
+          coresume(animation_loop, self)
         else
           del(self.animation_loops, animation_loop)
           del(animations, animation_loop)
