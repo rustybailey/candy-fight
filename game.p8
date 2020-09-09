@@ -58,7 +58,8 @@ dialog = {
     self.blinking_counter = 0
   end,
   queue = function(self, message, autoplay)
-    autoplay = type(autoplay) == "nil" and true or autoplay
+    -- default autoplay to false
+    autoplay = type(autoplay) == "nil" and false or autoplay
     add(self.dialog_queue, {
       message = message,
       autoplay = autoplay
@@ -69,7 +70,6 @@ dialog = {
     end
   end,
   trigger = function(self, message, autoplay)
-    -- default autoplay to true
     self.autoplay = autoplay
     self.current_message = ''
     self.messages_by_line = nil
@@ -131,8 +131,8 @@ dialog = {
     -- wait for input in update before proceeding
     for k, line in pairs(self.messages_by_line) do
       self.current_line_in_table = k
-      for i = 1, #line, 2 do
-        self.current_message ..= sub(line, i, i + 1)
+      for i = 1, #line do
+        self.current_message ..= sub(line, i, i)
 
         -- press btn 5 to skip to the end of the current passage
         -- otherwise, print 1 character per frame
@@ -694,7 +694,7 @@ story_screen = make_scene({
     self.t = 0
     self:add(dialog)
     local message = "it was a dark halloween night as you finished up a run of trick or treating. when you arrive home with your friends, you sort through your candy hoping for the best treats. however, as soon as you're about to bite into a delicious candy, it turns out to be more of a trick than a treat, and engages in battle with your friend's candy."
-    dialog:queue(message, false)
+    dialog:queue(message)
   end,
   update = function(self)
     if (#animations == 0) then
