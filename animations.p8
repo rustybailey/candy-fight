@@ -40,5 +40,21 @@ animations = {
 
     -- reset the camera back
     camera(0, 0)
+  end,
+  bleed = function()
+    local starting_positions = {
+      {87, 22},
+      {77, 25},
+      {82, 30},
+    }
+    for i = 1, 3 do
+      local x = starting_positions[i][1]
+      local y = starting_positions[i][2]
+      for i = 1, 15 do
+        spr(16, x, y)
+        y += 1
+        yield()
+      end
+    end
   end
 }

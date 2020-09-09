@@ -46,7 +46,7 @@ status_effects = {
     name = "bleed",
     power = 10,
     duration = 2,
-    animation = animations.basic_attack,
+    animation = animations.bleed,
     effects = {
       effects.damage
     }
