@@ -365,22 +365,22 @@ function make_candy(candy, x, y, color, is_player)
         name_x = screen_width - (#self.name * 4) - padding
         bar_x = 75
         hp_x = screen_width - (#hp_text * 4) - padding
-        y_offset = 12
+        ui_y = 66
       -- position enemy elements to the left
       else
         name_x = padding + 2
         bar_x = padding
         hp_x = padding + 2
-        y_offset = -5
+        ui_y = 8
       end
 
       -- display name
-      print(self.name, name_x, self.y + y_offset, 6)
+      print(self.name, name_x, ui_y, 6)
 
       -- display health bar
       local bar_length = 46
       local health_length = flr(bar_length * (self.hp / 100))
-      local bar_y = self.y + y_offset + 8
+      local bar_y = ui_y + 8
       -- background bar
       line(bar_x, bar_y, (bar_x + bar_length), bar_y, 2)
       -- health percentage
@@ -397,7 +397,7 @@ function make_candy(candy, x, y, color, is_player)
       end
 
       -- display hp numbers
-      print(hp_text, hp_x, self.y + y_offset + 12, 6)
+      print(hp_text, hp_x, ui_y + 12, 6)
 
 
       -- for debugging why turns weren't proceeding
@@ -483,8 +483,11 @@ function make_battle_scene(player_candy, enemy_candy)
       self.is_player_turn = true
       self.listen_for_turn_switch = false
 
-      player = self:add(make_candy(player_candy, 10, 54, 8, true))
-      enemy = self:add(make_candy(enemy_candy, 85, 13, 9, false))
+      local candy_x_padding = 15
+      local player_x = candy_x_padding
+      local enemy_x = screen_width - candy_x_padding - 32
+      player = self:add(make_candy(player_candy, player_x, 48, 8, true))
+      enemy = self:add(make_candy(enemy_candy, enemy_x, 13, 9, false))
       self:add(menu)
       self:add(dialog)
 
