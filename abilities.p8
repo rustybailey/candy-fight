@@ -253,7 +253,8 @@ abilities = {
     },
     animation = animations.basic_attack,
     effects = {
-      effects.damage
+      effects.damage,
+      effects.apply_statuses
     }
   },
   -- pb killer
@@ -265,7 +266,8 @@ abilities = {
     },
     animation = animations.basic_attack,
     effects = {
-      effects.damage
+      effects.damage,
+      effects.apply_statuses
     }
   },
   draw_blood = {
