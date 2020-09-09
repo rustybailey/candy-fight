@@ -187,6 +187,60 @@ abilities = {
       effects.reduce_attack_power,
       effects.reduce_defense_rating
     }
+  },
+  -- jaw crusher
+  split_wig = {
+    name = "split wig",
+    power = 10,
+    status_effects = nil,
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage,
+      effects.reduce_defense_rating
+    }
+  },
+  break_jaw = {
+    name = "break jaw",
+    power = 20,
+    status_effects = nil,
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage
+    }
+  },
+  jab = {
+    name = "jab",
+    power = 10,
+    status_effects = nil,
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage,
+      effects.reduce_defense_rating
+    }
+  },
+  uppercut = {
+    name = "uppercut",
+    power = 5,
+    status_effects = {
+      status_effects.bleed
+    },
+    animation = animations.basic_attack,
+    effects = {
+      effects.damage
+    }
+  },
+  -- pb killer
+  stab_stab_stab = {
+
+  },
+  draw_blood = {
+
+  },
+  slit_throat = {
+
+  },
+  disembowel = {
+
   }
 }
 

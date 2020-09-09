@@ -50,10 +50,10 @@ candies = {
     attack_power = 100,
     defense_rating = 100,
     abilities = {
-      abilities.bash,
-      abilities.bash,
-      abilities.bash,
-      abilities.bash
+      abilities.split_wig,
+      abilities.break_jaw,
+      abilities.jab,
+      abilities.uppercut
     }
   },
   pb_killer = {
