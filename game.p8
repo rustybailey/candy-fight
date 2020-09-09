@@ -532,10 +532,7 @@ end
 colors_light_to_dark = {10,7,15,11,6,9,12,14,13,3,8,4,5,2,1}
 function make_end_screen(player)
   local did_win = player.hp != 0
-  if (did_win) then
-    fanfare = 4
-  end
-
+  local fanfare = did_win and 4 or 7
   return make_scene({
     music = fanfare,
     init = function(self)
@@ -574,7 +571,7 @@ function make_end_screen(player)
         local thanks_x = 28
         local thanks_y = 75
         if (self.counter > end_of_fanfare) then
-          center_print("thanks for playing", thanks_y, 10)
+          center_print("thanks for playing", thanks_y, 9)
         elseif (self.counter > chord_3) then
           print("thanks for playing", thanks_x, thanks_y, 7)
         elseif (self.counter > chord_2) then
@@ -583,8 +580,12 @@ function make_end_screen(player)
           print("thanks", thanks_x, thanks_y, 7)
         end
       else
-        center_print("you're a worthless\n piece of garbage", 45, 10)
-        center_print("retry?", 75, 10)
+        center_print("you've lost the", 45, 9)
+        center_print("battle with living candy", 52, 9)
+
+        if (self.counter > 48 and self.counter % 30 > 15) then
+          center_print("try again?", 75, 9)
+        end
       end
     end
   })
@@ -962,6 +963,8 @@ __sfx__
 011000202d0502d0502d0502d0502d0502d0502d0502d0502b0502b0502b0502b0502b0502b0502b0502b0502d0502d0502d0502d0502d0502d0502d0502d0500000000000000000000000000000000000000000
 010400201405014050140501405016050160501605016050180501805018050180501b0501b0501b0501b0501d0501d0501d0501d050200502005020050200502205022050220502205024050240502405024050
 010400201b0501b0501b0501b0501d0501d0501d0501d0501f0501f0501f0501f050220502205022050220502405024050240502405027050270502705027050290502905029050290502b0502b0502b0502b050
+001000002b152241521d1521b152221521d15216152131521815214152101520c152001520015200152001520b1020a1020010200102001020010200102001020010200102001020010200102001020010200102
+011000001715114151111510f1510d1510b1510915107151061510415102153011530015300140001300012000000000010000100001000010000100001000010000100001000010000100001000010000100001
 __music__
 01 0406074e
 02 4411070e
@@ -970,4 +973,5 @@ __music__
 01 12134344
 00 17184344
 00 14151644
+04 191a4344
 
