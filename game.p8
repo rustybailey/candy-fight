@@ -551,7 +551,7 @@ function make_end_screen(player)
         if self.did_win then
           change_scene(title_screen)
         else
-          change_scene(make_battle_scene(candies.criminal_crunch, battle_enemies[current_battle]))
+          change_scene(make_battle_scene(player_starting_candy, battle_enemies[current_battle]))
         end
       end
     end,
@@ -679,7 +679,7 @@ story_screen = make_scene({
   end,
   update = function(self)
     if (#animations == 0) then
-      change_scene(make_battle_scene(candies.criminal_crunch, battle_enemies[current_battle]))
+      change_scene(make_battle_scene(player_starting_candy, battle_enemies[current_battle]))
     end
   end,
   draw = function(self)
@@ -730,7 +730,7 @@ map_screen = make_scene({
     -- when finished walking and finished with delay, change scene
     if (self.is_finished_walking) then
       current_battle += 1
-      change_scene(make_battle_scene(candies.razor_apple, battle_enemies[current_battle]))
+      change_scene(make_battle_scene(player_starting_candy, battle_enemies[current_battle]))
       return
     end
 
@@ -798,19 +798,19 @@ map_screen = make_scene({
 
 current_scene = title_screen
 -- current_scene = story_screen
--- current_scene = make_battle_scene(candies.razor_apple, battle_enemies[current_battle])
+-- current_scene = make_battle_scene(player_starting_candy, battle_enemies[current_battle])
 -- current_scene = map_screen
 
 -- player = {hp = 0}
 -- current_scene = make_end_screen(player)
 
 current_battle = 1
+player_starting_candy = candies.criminal_crunch
 battle_enemies = {
   candies.pb_killer,
-  candies.jaw_crusher,
+  candies.razor_apple,
   candies.boom_pops,
-  candies.criminal_crunch,
-  -- candies.pb_killer
+  candies.jaw_crusher,
 }
 
 function _init()
