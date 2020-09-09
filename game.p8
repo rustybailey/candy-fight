@@ -317,10 +317,6 @@ function make_candy(candy, x, y, color, is_player)
       end
     end,
     random_ability = function(self, opponent)
-      foreach(self.ability_objects, function(ability_object)
-        printh(ability_object.name)
-      end)
-
       local random_ability = self.ability_objects[flr(rnd(4)) + 1]
       self:use_ability(opponent, random_ability)
     end,
@@ -509,7 +505,6 @@ function make_battle_scene(player_candy, enemy_candy)
       end)
 
       foreach(enemy.ability_objects, function(ability)
-        printh(ability.name)
         self:add(ability)
       end)
 
@@ -597,7 +592,7 @@ function make_end_screen(player)
         center_print("battle with living candy", 52, 9)
 
         if (self.counter > 48 and self.counter % 30 > 15) then
-          center_print("Press z to try again", 75, 9)
+          center_print("press z to try again", 75, 9)
         end
       end
     end
@@ -632,7 +627,6 @@ title_screen = make_scene({
     battle_enemies = {}
 
     for i = 2, #candies do
-      printh(candies[i].name)
       add(battle_enemies, candies[i])
     end
   end,
