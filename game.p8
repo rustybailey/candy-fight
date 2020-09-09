@@ -513,10 +513,12 @@ function make_battle_scene(player_candy, enemy_candy)
         self:add(ability)
       end)
 
-      -- enemy.hp *= (1 + current_battle / 100)
-      -- enemy.max_hp *= (1 + current_battle / 100)
-      -- enemy.attack_power *= (1 + current_battle / 100)
-      -- enemy.defense_rating *= (1 + current_battle / 100)
+      -- each battle beyond the first, give the enemy
+      -- 10 more to each stat
+      enemy.hp += 10 * (current_battle - 1)
+      enemy.max_hp += 10 * (current_battle - 1)
+      enemy.attack_power += 10 * (current_battle - 1)
+      enemy.defense_rating += 10 * (current_battle - 1)
     end,
     update = function(self)
       if (self.listen_for_turn_switch) then
@@ -595,7 +597,7 @@ function make_end_screen(player)
         center_print("battle with living candy", 52, 9)
 
         if (self.counter > 48 and self.counter % 30 > 15) then
-          center_print("try again?", 75, 9)
+          center_print("Press z to try again", 75, 9)
         end
       end
     end
