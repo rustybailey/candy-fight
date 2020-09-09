@@ -41,11 +41,11 @@ animations = {
     -- reset the camera back
     camera(0, 0)
   end,
-  bleed = function()
+  bleed = function(target)
     local starting_positions = {
-      {87, 22},
-      {77, 25},
-      {82, 30},
+      {target.x + 7, target.y + 10},
+      {target.x - 3, target.y + 13},
+      {target.x + 2, target.y + 17},
     }
     for i = 1, 3 do
       local x = starting_positions[i][1]
