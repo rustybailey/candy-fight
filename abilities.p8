@@ -46,6 +46,7 @@ status_effects = {
     name = "bleed",
     power = 10,
     duration = 2,
+    is_status_effect = true,
     animation = animations.bleed,
     effects = {
       effects.damage
@@ -55,6 +56,7 @@ status_effects = {
     name = "rot",
     power = 4,
     duration = 5,
+    is_status_effect = true,
     animation = animations.basic_attack,
     effects = {
       effects.damage
@@ -196,6 +198,7 @@ function make_ability(candy, ability)
     status_effects = ability.status_effects,
     duration = ability.duration,
     animation = ability.animation,
+    is_status_effect = ability.is_status_effect,
     opponent = nil,
     animation_loops = {},
     effects = ability.effects,
@@ -205,7 +208,7 @@ function make_ability(candy, ability)
       if (self.duration != nil and self.duration > 0) self.duration -= 1
       -- if the ability has an animation, add it
       if (self.animation) add(self.animation_loops, cocreate(self.animation))
-      if (opponent.is_player) then
+      if (opponent.is_player and not self.is_status_effect) then
         -- if the opponent is the player, add the screen shake
         add(self.animation_loops, cocreate(animations.screen_shake))
       end
