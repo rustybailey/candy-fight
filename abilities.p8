@@ -10,7 +10,6 @@ effects = {
     ability.opponent.hp -= damage
     -- don't let opponent hp fall below zero
     if (ability.opponent.hp < 0) ability.opponent.hp = 0
-    dialog:queue(ability.opponent.name.." was hit for "..damage.." damage")
   end,
   apply_statuses = function(ability)
     foreach(ability.status_effects, function(status_effect)
@@ -18,25 +17,27 @@ effects = {
       add(ability.opponent.status_effects, status_effect_ability)
       -- @todo this doesn't feel great here
       current_scene:add(status_effect_ability)
-      dialog:queue(ability.candy.name.." used "..ability.name)
-      dialog:queue(ability.opponent.name.." was affected by "..status_effect.name)
+      dialog:queue(ability.opponent.name.." was inflicted with "..status_effect.name)
     end)
   end,
   reduce_attack_power = function(ability)
     ability.opponent.attack_power *= (1 - (ability.power / 100))
     -- don't let attack power fall below 0
     ability.opponent.attack_power = max(ability.opponent.attack_power, 0)
+    dialog:queue(ability.opponent.name.."'s attack was lowered")
   end,
   reduce_defense_rating = function(ability)
     ability.opponent.defense_rating *= (1 - (ability.power / 100))
     -- don't let defense rating fall below 0
     ability.opponent.defense_rating = max(ability.opponent.defense_rating, 0)
+    dialog:queue(ability.opponent.name.."'s defense was lowered")
   end,
   heal = function(ability)
     ability.candy.hp += ability.power
 
     -- don't allow the heal to give more than max hp
     ability.candy.hp = min(ability.candy.hp, ability.candy.max_hp)
+    dialog:queue(ability.candy.." healed")
   end
 }
 
@@ -78,7 +79,7 @@ abilities = {
     name = "bash",
     power = 14,
     status_effects = {},
-    animation = nil,
+    animation = animations.basic_attack,
     effects = {
       effects.damage
     }
@@ -140,7 +141,7 @@ abilities = {
     status_effects = nil,
     animation = animations.basic_attack,
     effects = {
-      effects.attack,
+      effects.damage,
       effects.reduce_attack_power
     }
   },
@@ -151,7 +152,7 @@ abilities = {
     status_effects = nil,
     animation = animations.basic_attack,
     effects = {
-      effects.attack
+      effects.damage
     }
   },
   rat_a_tat = {

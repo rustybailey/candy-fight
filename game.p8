@@ -289,19 +289,23 @@ function make_candy(candy, x, y, color, is_player)
         return
       end
 
-      -- when you use an ability, do something
-      if (not self.is_using_ability and self.is_player and current_scene.is_player_turn and #animations == 0 and btnp(4)) then
-        self:selected_ability(enemy)
+      if (self.wait_to_apply_status_effects and #animations == 0) then
         self:apply_status_effects()
         current_scene:switch_turns()
+        return
+      end
+
+      -- when you use an ability, do something
+      if (self.is_player and current_scene.is_player_turn and #animations == 0 and btnp(4)) then
+        self:selected_ability(enemy)
+        self.wait_to_apply_status_effects = true
         menu:toggle(false)
       end
 
       -- if it's not the player's turn, it's not the player, and no animations are happening
-      if (not self.is_using_ability and not self.is_player and not current_scene.is_player_turn and #animations == 0) then
+      if (not self.is_player and not current_scene.is_player_turn and #animations == 0) then
         self:random_ability(player)
-        self:apply_status_effects()
-        current_scene:switch_turns()
+        self.wait_to_apply_status_effects = true
       end
     end,
     random_ability = function(self, opponent)
@@ -324,7 +328,9 @@ function make_candy(candy, x, y, color, is_player)
       printh("attack_power: "..opponent.attack_power)
       printh("defense_rating: "..opponent.defense_rating)
     end,
+    wait_to_apply_status_effects = false,
     apply_status_effects = function(self)
+      self.wait_to_apply_status_effects = false
       if (#self.status_effects > 0) then
         foreach (self.status_effects, function(status_effect)
           -- @todo add status effects to current scene here if not already added
@@ -334,6 +340,7 @@ function make_candy(candy, x, y, color, is_player)
             -- dereference to avoid a memory leak
             status_effect = nil
           else
+            dialog:queue(self.name .. " was affected by " .. status_effect.name)
             status_effect:trigger(self)
           end
         end)
@@ -547,7 +554,7 @@ function make_end_screen(player)
         if self.did_win then
           change_scene(title_screen)
         else
-          change_scene(make_battle_scene(candies.razor_apple, battle_enemies[current_battle]))
+          change_scene(make_battle_scene(candies.boom_pops, battle_enemies[current_battle]))
         end
       end
     end,
@@ -671,7 +678,7 @@ story_screen = make_scene({
   end,
   update = function(self)
     if (#animations == 0) then
-      change_scene(make_battle_scene(candies.razor_apple, battle_enemies[current_battle]))
+      change_scene(make_battle_scene(candies.boom_pops, battle_enemies[current_battle]))
     end
   end,
   draw = function(self)
