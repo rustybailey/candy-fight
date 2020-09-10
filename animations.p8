@@ -147,15 +147,15 @@ animations = {
       if (i <= 5) then
         line(sword_x1, sword_y1, sword_x2, sword_y2, 7)
       elseif (i > 5 and i <= 7) then
-        spr(160, sprite_x, sprite_y, 2, 2)
+        spr(196, sprite_x, sprite_y, 4, 4)
       elseif (i > 7 and i <= 9) then
-        spr(162, sprite_x, sprite_y, 2, 2)
+        spr(200, sprite_x, sprite_y, 4, 4)
       elseif (i > 9 and i <= 15) then
         line(sword_x1, sword_y1, sword_x2, sword_y2, 7)
       elseif (i > 15 and i <= 17) then
-        spr(160, sprite_x, sprite_y, 2, 2)
+        spr(196, sprite_x, sprite_y, 4, 4)
       elseif (i > 17 and i <= 19) then
-        spr(162, sprite_x, sprite_y, 2, 2)
+        spr(200, sprite_x, sprite_y, 4, 4)
       elseif (i > 19 and i <= 25) then
         line(sword_x1, sword_y1, sword_x2, sword_y2, 7)
       end
