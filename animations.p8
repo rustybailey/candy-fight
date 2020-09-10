@@ -140,6 +140,10 @@ animations = {
     local sprite_y = sword_y1 - 12
 
     for i = 1, 25 do
+      if (i == 6 or i == 16) then
+        sfx(36)
+      end
+
       if (i <= 5) then
         line(sword_x1, sword_y1, sword_x2, sword_y2, 7)
       elseif (i > 5 and i <= 7) then
