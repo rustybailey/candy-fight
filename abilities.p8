@@ -149,7 +149,7 @@ abilities = {
     name = "pop",
     power = 7,
     status_effects = {},
-    animation = animations.basic_attack,
+    animation = animations.explosion,
     effects = {
       effects.damage
     }
@@ -169,7 +169,7 @@ abilities = {
     name = "boom",
     power = 20,
     status_effects = {},
-    animation = animations.basic_attack,
+    animation = animations.explosion,
     effects = {
       effects.damage
     }
@@ -199,7 +199,7 @@ abilities = {
     status_effects = {
       status_effects.bleed
     },
-    animation = animations.basic_attack,
+    animation = animations.explosion,
     effects = {
       effects.apply_statuses
     }
@@ -238,7 +238,7 @@ abilities = {
     name = "break jaw",
     power = 20,
     status_effects = {},
-    animation = animations.basic_attack,
+    animation = animations.explosion,
     effects = {
       effects.damage
     }

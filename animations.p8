@@ -193,5 +193,37 @@ animations = {
         yield()
       end
     end
+  end,
+  explosion = function(self)
+    local target = self.opponent
+    local circle_x = target.x + 15
+    local circle_y = target.y + 15
+    local radius = 12
+
+    for i = 1, 25 do
+
+      if (i <= 2) then
+        circfill(circle_x, circle_y, radius, 0)
+      elseif (i > 2 and i <= 4) then
+        circfill(circle_x, circle_y, radius, 7)
+      elseif (i > 4 and i <= 8) then
+        spr(192, circle_x - radius, circle_y - radius, 4, 4)
+      elseif (i > 9 and i <= 13) then
+        circfill(target.x + 5, target.y + 5, 5, 5)
+        circfill(target.x + 15, target.y + 7, 5, 5)
+        circfill(target.x + 20, target.y + 15, 5, 5)
+        circfill(target.x + 7, target.y + 15, 5, 5)
+        circfill(target.x + 20, target.y + 25, 5, 5)
+
+        circfill(target.x + 6, target.y + 6, 5, 9)
+        circfill(target.x + 17, target.y + 5, 5, 9)
+        circfill(target.x + 15, target.y + 20, 5, 9)
+      elseif (i > 13 and i <= 15) then
+        circfill(target.x + 7, target.y + 7, 5, 5)
+        circfill(target.x + 12, target.y + 10, 5, 5)
+        circfill(target.x + 20, target.y + 30, 5, 5)
+      end
+      yield()
+    end
   end
 }
