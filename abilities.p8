@@ -130,7 +130,7 @@ abilities = {
     name = "rot teeth",
     power = 15,
     status_effects = {},
-    animation = animations.basic_attack,
+    animation = animations.debuff,
     effects = {
       effects.reduce_defense_rating
     }
@@ -139,7 +139,7 @@ abilities = {
     name = "caramelize",
     power = 10,
     status_effects = {},
-    animation = nil,
+    animation = animations.buff,
     effects = {
       effects.increase_defense_rating
     }
@@ -217,7 +217,7 @@ abilities = {
     name = "swack swack",
     power = 10,
     status_effects = {},
-    animation = animations.basic_attack,
+    animation = animations.debuff,
     effects = {
       effects.reduce_attack_power,
       effects.reduce_defense_rating
@@ -247,7 +247,7 @@ abilities = {
     name = "jab",
     power = 10,
     status_effects = {},
-    animation = animations.basic_attack,
+    animation = animations.buff,
     effects = {
       effects.damage,
       effects.increase_defense_rating
@@ -300,7 +300,7 @@ abilities = {
     name = "disembowel",
     power = 20,
     status_effects = nil,
-    animation = animations.basic_attack,
+    animation = animations.debuff,
     effects = {
       effects.reduce_defense_rating
     }

@@ -157,5 +157,35 @@ animations = {
       end
       yield()
     end
+  end,
+  debuff = function(self)
+    local target = self.opponent
+    local start_x = target.x - 5
+    local start_y = target.y - 5
+    for i = 1, 3 do
+      local x = start_x
+      local y = start_y
+      for i = 1, 15 do
+        spr(49, x, y)
+        y += 1
+        yield()
+      end
+    end
+  end,
+  buff = function(self)
+    local target = self.candy
+    local start_x = target.x - 5
+    local start_y = target.y - 5 + 15
+    for i = 1, 3 do
+      local x = start_x
+      local y = start_y
+      for i = 1, 15 do
+        pal(13, 12)
+        spr(49, x, y, 1, 1, false, true)
+        pal()
+        y -= 1
+        yield()
+      end
+    end
   end
 }
