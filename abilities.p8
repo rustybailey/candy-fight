@@ -87,7 +87,7 @@ status_effects = {
     power = 5,
     duration = 4,
     is_status_effect = true,
-    animation = nil,
+    animation = animations.poison,
     effects = {
       effects.flat_damage
     }
@@ -97,7 +97,7 @@ status_effects = {
     power = 4,
     duration = 5,
     is_status_effect = true,
-    animation = animations.basic_attack,
+    animation = animations.rot,
     effects = {
       effects.flat_damage
     }

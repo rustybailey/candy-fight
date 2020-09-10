@@ -59,6 +59,44 @@ animations = {
       end
     end
   end,
+  poison = function(self)
+    local target = self.opponent
+    local starting_positions = {
+      {target.x + 7, target.y + 10},
+      {target.x - 3, target.y + 13},
+      {target.x + 2, target.y + 17},
+    }
+    for i = 1, 3 do
+      local x = starting_positions[i][1]
+      local y = starting_positions[i][2]
+      for i = 1, 15 do
+        pal(8, 1)
+        spr(16, x, y)
+        pal()
+        y += 1
+        yield()
+      end
+    end
+  end,
+  rot = function(self)
+    local target = self.opponent
+    local starting_positions = {
+      {target.x + 7, target.y + 10},
+      {target.x - 3, target.y + 13},
+      {target.x + 2, target.y + 17},
+    }
+    for i = 1, 3 do
+      local x = starting_positions[i][1]
+      local y = starting_positions[i][2]
+      for i = 1, 15 do
+        pal(8, 5)
+        spr(16, x, y)
+        pal()
+        y += 1
+        yield()
+      end
+    end
+  end,
   heal = function(self)
     local target = self.candy
     local origin_x = target.x + 15
@@ -93,10 +131,10 @@ animations = {
     local target = self.opponent
     local x = target.x
     local y = target.y
-    local sword_x1 = x + 30
-    local sword_y1 = y
-    local sword_x2 = x + 35
-    local sword_y2 = y - 10
+    local sword_x1 = x + 15
+    local sword_y1 = y + 10
+    local sword_x2 = sword_x1 + 5
+    local sword_y2 = sword_y1 - 10
 
     local sprite_x = sword_x1 - 12
     local sprite_y = sword_y1 - 12
