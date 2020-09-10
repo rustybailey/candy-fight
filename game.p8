@@ -600,7 +600,6 @@ function make_end_screen(player)
 end
 
 title_screen = make_scene({
-  music = 8,
   init = function(self)
     current_battle = 1
 
