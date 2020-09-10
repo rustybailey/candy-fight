@@ -14,3 +14,10 @@ It's Halloween and you've just gone trick-or-treating.  When you get home you an
 * 5 unique candies
 * Unique abilities for each candy
 * Each time you play your candy and the enemies are randomized
+
+## The game
+![Title](screens/title.gif)
+![Intro](screens/intro.gif)
+![Battle 1](screens/battle_1.gif)
+![Battle 2](screens/battle_2.gif)
+![Battle 3](screens/battle_3.gif)
