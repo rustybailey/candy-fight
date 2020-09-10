@@ -1,6 +1,8 @@
 pico-8 cartridge // http://www.pico-8.com
 version 29
 __lua__
+-- full moon sweet
+-- by rusty bailey & matt rathbun
 
 screen_width = 128
 function center_print(message, y, color)
