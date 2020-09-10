@@ -621,7 +621,7 @@ title_screen = make_scene({
     end
 
     -- randomize the player and enemies
-    -- shuffle_table(candies)
+    shuffle_table(candies)
 
     player_candy = candies[1]
     battle_enemies = {}
