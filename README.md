@@ -1,4 +1,4 @@
-# Candy Fight
+# Full Moon Sweet
 It's Halloween and you've just gone trick-or-treating.  When you get home you and your friends dump your stashes on the floor.  Who got the best loot?  Who got the most candy?  Who cares ... before you know it, your candies have come to life, with a thirst for blood and sugar!
 
 ## How to play
@@ -16,8 +16,13 @@ It's Halloween and you've just gone trick-or-treating.  When you get home you an
 * Each time you play your candy and the enemies are randomized
 
 ## The game
-* ![Title](screens/title.gif)
-* ![Intro](screens/intro.gif)
-* ![Battle 1](screens/battle_1.gif)
-* ![Battle 2](screens/battle_2.gif)
-* ![Battle 3](screens/battle_3.gif)
+Title
+![Title](screens/title.gif)
+Intro
+![Intro](screens/intro.gif)
+Battle 1
+![Battle 1](screens/battle_1.gif)
+Battle 2
+![Battle 2](screens/battle_2.gif)
+Battle 3
+![Battle 3](screens/battle_3.gif)
