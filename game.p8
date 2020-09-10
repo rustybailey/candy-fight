@@ -510,10 +510,10 @@ function make_battle_scene(player_candy, enemy_candy)
 
       -- each battle beyond the first, give the enemy
       -- 10 more to each stat
-      enemy.hp += 10 * (current_battle - 1)
-      enemy.max_hp += 10 * (current_battle - 1)
-      enemy.attack_power += 10 * (current_battle - 1)
-      enemy.defense_rating += 10 * (current_battle - 1)
+      enemy.hp += 5 * (current_battle - 1)
+      enemy.max_hp += 5 * (current_battle - 1)
+      enemy.attack_power += 5 * (current_battle - 1)
+      enemy.defense_rating += 5 * (current_battle - 1)
     end,
     update = function(self)
       if (self.listen_for_turn_switch) then

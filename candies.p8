@@ -5,8 +5,8 @@ candies = {
     sprite = 20,
     hp = 100,
     max_hp = 100,
-    attack_power = 50,
-    defense_rating = 150,
+    attack_power = 75,
+    defense_rating = 125,
     abilities = {
       abilities.throw_razor,
       abilities.bash,
@@ -47,8 +47,8 @@ candies = {
     sprite = 88,
     hp = 100,
     max_hp = 100,
-    attack_power = 700,
-    defense_rating = 130,
+    attack_power = 85,
+    defense_rating = 115,
     abilities = {
       abilities.split_wig,
       abilities.break_jaw,

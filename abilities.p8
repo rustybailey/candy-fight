@@ -11,6 +11,11 @@ effects = {
     -- don't let opponent hp fall below zero
     if (ability.opponent.hp < 0) ability.opponent.hp = 0
   end,
+  flat_damage = function(ability)
+    ability.opponent.hp -= ability.power
+    -- don't let opponent hp fall below zero
+    if (ability.opponent.hp < 0) ability.opponent.hp = 0
+  end,
   apply_statuses = function(ability)
     foreach(ability.status_effects, function(status_effect)
       local status_name = status_effect.name
@@ -39,19 +44,22 @@ effects = {
     end)
   end,
   reduce_attack_power = function(ability)
-    ability.opponent.attack_power *= (1 - (ability.power / 100))
+    -- ability.opponent.attack_power *= (1 - (ability.power / 100))
+    ability.opponent.attack_power -= ability.power
     -- don't let attack power fall below 0
     ability.opponent.attack_power = max(ability.opponent.attack_power, 0)
     dialog:queue(ability.opponent.name.."'s attack was lowered")
   end,
   reduce_defense_rating = function(ability)
-    ability.opponent.defense_rating *= (1 - (ability.power / 100))
+    -- ability.opponent.defense_rating *= (1 - (ability.power / 100))
+    ability.opponent.defense_rating -= ability.power
     -- don't let defense rating fall below 0
     ability.opponent.defense_rating = max(ability.opponent.defense_rating, 0)
     dialog:queue(ability.opponent.name.."'s defense was lowered")
   end,
   increase_defense_rating = function(ability)
-    ability.candy.defense_rating *= (1 + (ability.power / 100))
+    -- ability.candy.defense_rating *= (1 + (ability.power / 100))
+    ability.candy.defense_rating += ability.power
     dialog:queue(ability.candy.name.."'s defense was increased")
   end,
   heal = function(ability)
@@ -71,7 +79,7 @@ status_effects = {
     is_status_effect = true,
     animation = animations.bleed,
     effects = {
-      effects.damage
+      effects.flat_damage
     }
   },
   poison = {
@@ -81,7 +89,7 @@ status_effects = {
     is_status_effect = true,
     animation = nil,
     effects = {
-      effects.damage
+      effects.flat_damage
     }
   },
   rot = {
@@ -91,7 +99,7 @@ status_effects = {
     is_status_effect = true,
     animation = animations.basic_attack,
     effects = {
-      effects.damage
+      effects.flat_damage
     }
   }
 }
@@ -111,7 +119,7 @@ abilities = {
   },
   bash = {
     name = "bash",
-    power = 10,
+    power = 15,
     status_effects = {},
     animation = animations.basic_attack,
     effects = {
@@ -129,7 +137,7 @@ abilities = {
   },
   caramelize = {
     name = "caramelize",
-    power = 15,
+    power = 10,
     status_effects = {},
     animation = nil,
     effects = {
@@ -272,7 +280,7 @@ abilities = {
   },
   draw_blood = {
     name = "draw blood",
-    power = 6,
+    power = 10,
     status_effects = nil,
     animation = animations.heal,
     effects = {
