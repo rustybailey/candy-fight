@@ -149,7 +149,7 @@ abilities = {
     name = "pop",
     power = 7,
     status_effects = {},
-    animation = animations.explosion,
+    animation = animations.basic_attack,
     effects = {
       effects.damage
     }
@@ -160,7 +160,7 @@ abilities = {
     status_effects = {
       status_effects.poison
     },
-    animation = animations.basic_attack,
+    animation = animations.poison,
     effects = {
       effects.apply_statuses
     }
@@ -178,7 +178,7 @@ abilities = {
     name = "settle down",
     power = 20,
     status_effects = {},
-    animation = animations.basic_attack,
+    animation = animations.debuff,
     effects = {
       effects.reduce_attack_power
     }
@@ -199,7 +199,7 @@ abilities = {
     status_effects = {
       status_effects.bleed
     },
-    animation = animations.explosion,
+    animation = animations.bleed,
     effects = {
       effects.apply_statuses
     }
@@ -228,7 +228,7 @@ abilities = {
     name = "split wig",
     power = 10,
     status_effects = {},
-    animation = animations.slice,
+    animation = animations.basic_attack,
     effects = {
       effects.damage,
       effects.reduce_defense_rating
@@ -272,7 +272,7 @@ abilities = {
     status_effects = {
       status_effects.bleed
     },
-    animation = animations.basic_attack,
+    animation = animations.slice,
     effects = {
       effects.damage,
       effects.apply_statuses
