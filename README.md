@@ -1,4 +1,4 @@
-# candy-fight
+# Candy Fight
 It's Halloween and you've just gone trick-or-treating.  When you get home you and your friends dump your stashes on the floor.  Who got the best loot?  Who got the most candy?  Who cares ... before you know it, your candies have come to life, with a thirst for blood and sugar!
 
 ## How to play
