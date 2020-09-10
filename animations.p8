@@ -110,7 +110,7 @@ animations = {
     }
     local rotations = 0
     local max_rotations = 2
-
+    sfx(35)
     while (rotations < (max_rotations * #circles)) do
       local rotated = false
       for i = 1, #circles do
@@ -165,6 +165,7 @@ animations = {
     for i = 1, 3 do
       local x = start_x
       local y = start_y
+      sfx(33)
       for i = 1, 15 do
         spr(49, x, y)
         y += 1
@@ -179,6 +180,7 @@ animations = {
     for i = 1, 3 do
       local x = start_x
       local y = start_y
+      sfx(34)
       for i = 1, 15 do
         pal(13, 12)
         spr(49, x, y, 1, 1, false, true)

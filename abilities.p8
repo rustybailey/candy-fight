@@ -121,7 +121,7 @@ abilities = {
     name = "bash",
     power = 15,
     status_effects = {},
-    animation = animations.basic_attack,
+    animation = animations.heal,
     effects = {
       effects.damage
     }
