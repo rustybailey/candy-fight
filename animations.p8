@@ -88,5 +88,36 @@ animations = {
       if (rotated) then rotations += 1 end
       yield()
     end
+  end,
+  slice = function(self)
+    local target = self.opponent
+    local x = target.x
+    local y = target.y
+    local sword_x1 = x + 30
+    local sword_y1 = y
+    local sword_x2 = x + 35
+    local sword_y2 = y - 10
+
+    local sprite_x = sword_x1 - 12
+    local sprite_y = sword_y1 - 12
+
+    for i = 1, 25 do
+      if (i <= 5) then
+        line(sword_x1, sword_y1, sword_x2, sword_y2, 7)
+      elseif (i > 5 and i <= 7) then
+        spr(160, sprite_x, sprite_y, 2, 2)
+      elseif (i > 7 and i <= 9) then
+        spr(162, sprite_x, sprite_y, 2, 2)
+      elseif (i > 9 and i <= 15) then
+        line(sword_x1, sword_y1, sword_x2, sword_y2, 7)
+      elseif (i > 15 and i <= 17) then
+        spr(160, sprite_x, sprite_y, 2, 2)
+      elseif (i > 17 and i <= 19) then
+        spr(162, sprite_x, sprite_y, 2, 2)
+      elseif (i > 19 and i <= 25) then
+        line(sword_x1, sword_y1, sword_x2, sword_y2, 7)
+      end
+      yield()
+    end
   end
 }

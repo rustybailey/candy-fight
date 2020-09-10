@@ -112,7 +112,7 @@ abilities = {
     status_effects = {
       status_effects.bleed
     },
-    animation = animations.basic_attack,
+    animation = animations.slice,
     effects = {
       effects.apply_statuses
     }
@@ -228,7 +228,7 @@ abilities = {
     name = "split wig",
     power = 10,
     status_effects = {},
-    animation = animations.basic_attack,
+    animation = animations.slice,
     effects = {
       effects.damage,
       effects.reduce_defense_rating
@@ -259,7 +259,7 @@ abilities = {
     status_effects = {
       status_effects.bleed
     },
-    animation = animations.basic_attack,
+    animation = animations.slice,
     effects = {
       effects.damage,
       effects.apply_statuses
@@ -291,7 +291,7 @@ abilities = {
     name = "slit throat",
     power = 20,
     status_effects = nil,
-    animation = animations.basic_attack,
+    animation = animations.slice,
     effects = {
       effects.damage
     }
